@@ -4,21 +4,17 @@ import type { ReactNode } from "react";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/providers/theme-provider";
 
+/**
+ * App-wide client providers.
+ * Theme is fixed to light in layout — no next-themes script injection
+ * (React 19 rejects <script> rendered from client components).
+ */
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      forcedTheme="light"
-      enableSystem={false}
-      disableTransitionOnChange
-    >
-      <TooltipProvider>
-        {children}
-        <Toaster richColors closeButton position="top-right" />
-      </TooltipProvider>
-    </ThemeProvider>
+    <TooltipProvider>
+      {children}
+      <Toaster richColors closeButton position="top-right" />
+    </TooltipProvider>
   );
 }
