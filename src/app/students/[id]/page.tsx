@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { isVerificationActive, requireVerifiedStudent } from "@/lib/auth";
 import { startConversationAction } from "@/lib/actions/messages";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { getInitials } from "@/lib/utils";
@@ -48,6 +49,14 @@ export default async function StudentProfilePage({
     !current?.is_admin
   ) {
     notFound();
+  }
+
+  if (current.id !== student.id && student.is_specialist_enabled) {
+    await trackAnalyticsEvent({
+      eventType: "profile_view",
+      actorId: current.id,
+      subjectProfileId: student.id,
+    });
   }
 
   const { data: reviews } = await supabase

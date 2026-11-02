@@ -10,6 +10,8 @@ import {
   MessageSquare,
   UserRound,
   Settings,
+  Briefcase,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +20,8 @@ const items = [
   { href: "/requests", label: "Browse Requests", icon: Search },
   { href: "/dashboard/requests", label: "My Requests", icon: FileText },
   { href: "/dashboard/applications", label: "My Applications", icon: Send },
+  { href: "/dashboard/specialist", label: "Specialist Mode", icon: Briefcase },
+  { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/messages", label: "Messages", icon: MessageSquare },
   { href: "/settings", label: "My Profile", icon: UserRound },
   { href: "/settings", label: "Settings", icon: Settings },

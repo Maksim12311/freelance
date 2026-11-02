@@ -12,6 +12,8 @@ import { closeRequestAction, saveRequestAction, selectPreferredApplicantAction }
 import { startConversationAction } from "@/lib/actions/messages";
 import { updateApplicationStatusAction } from "@/lib/actions/applications";
 import { hasSupabaseEnv } from "@/lib/data";
+import { getPricingSetting, formatEur } from "@/lib/pricing";
+import { countApplicationCredits } from "@/lib/payments";
 import { createClient } from "@/lib/supabase/server";
 import { formatBudget, formatDate } from "@/lib/utils";
 
@@ -66,11 +68,14 @@ export default async function RequestDetailPage({
     profile && !isOwner
       ? await supabase
           .from("applications")
-          .select("id, status")
+          .select("id, status, messaging_unlocked")
           .eq("request_id", id)
           .eq("applicant_id", profile.id)
           .maybeSingle()
       : { data: null };
+
+  const pricing = await getPricingSetting("application_fee");
+  const credits = profile && !isOwner ? await countApplicationCredits(profile.id) : 0;
 
   return (
     <PublicShell>
@@ -95,6 +100,14 @@ export default async function RequestDetailPage({
             </CardContent>
           </Card>
           <PlatformNotice />
+          {isOwner ? (
+            <div className="flex flex-wrap gap-2">
+              <Button render={<Link href={`/requests/${id}/suggestions`} />}>
+                Suggested specialists
+              </Button>
+            </div>
+          ) : null}
+
           {isOwner ? (
             <Card>
               <CardHeader>
@@ -195,19 +208,24 @@ export default async function RequestDetailPage({
 
           <div className="flex flex-col gap-2">
             {isOwner ? (
-              <form
-                action={async () => {
-                  "use server";
-                  await closeRequestAction(id);
-                }}
-              >
-                <Button type="submit" variant="outline" className="w-full">
-                  Close request
+              <>
+                <Button className="w-full" render={<Link href={`/requests/${id}/suggestions`} />}>
+                  Browse suggested specialists
                 </Button>
-              </form>
+                <form
+                  action={async () => {
+                    "use server";
+                    await closeRequestAction(id);
+                  }}
+                >
+                  <Button type="submit" variant="outline" className="w-full">
+                    Close request
+                  </Button>
+                </form>
+              </>
             ) : (
               <>
-                {owner?.id ? (
+                {owner?.id && existingApplication?.messaging_unlocked ? (
                   <form
                     action={async () => {
                       "use server";
@@ -215,9 +233,13 @@ export default async function RequestDetailPage({
                     }}
                   >
                     <Button type="submit" className="w-full" disabled={!verified}>
-                      Contact Student
+                      Open conversation
                     </Button>
                   </form>
+                ) : owner?.id ? (
+                  <p className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                    Messaging unlocks after you successfully apply (paid when fees are enabled).
+                  </p>
                 ) : null}
                 {profile ? (
                   <form
@@ -247,9 +269,15 @@ export default async function RequestDetailPage({
                 {existingApplication ? (
                   <p className="text-sm text-slate-600">
                     You already applied · status: {existingApplication.status}
+                    {existingApplication.messaging_unlocked ? " · messaging unlocked" : ""}
                   </p>
                 ) : (
-                  <ApplicationForm requestId={id} />
+                  <ApplicationForm
+                    requestId={id}
+                    feeFormatted={formatEur(pricing.amount_eur)}
+                    feeEnabled={pricing.is_enabled}
+                    credits={credits}
+                  />
                 )}
               </CardContent>
             </Card>

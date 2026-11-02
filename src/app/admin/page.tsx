@@ -7,14 +7,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { requireAdmin } from "@/lib/auth";
 import {
   approveVerificationAction,
+  grantApplicationCreditsAction,
   hideRequestAction,
   hideReviewAction,
   moderateReportAction,
   rejectVerificationAction,
   suspendUserAction,
+  updatePricingSettingAction,
   upsertCategoryAction,
   upsertUniversityDomainAction,
 } from "@/lib/actions/admin";
+import { getAllPricingSettings, formatEur } from "@/lib/pricing";
 import { createClient } from "@/lib/supabase/server";
 import { formatRelativeDate } from "@/lib/utils";
 
@@ -35,6 +38,7 @@ export default async function AdminPage() {
     { data: categories },
     { data: universities },
     { data: auditLogs },
+    pricingSettings,
   ] = await Promise.all([
     supabase.from("profiles").select("*", { count: "exact", head: true }),
     supabase.from("requests").select("*", { count: "exact", head: true }),
@@ -71,6 +75,7 @@ export default async function AdminPage() {
       .select("*")
       .order("created_at", { ascending: false })
       .limit(20),
+    getAllPricingSettings(),
   ]);
 
   return (
@@ -336,6 +341,76 @@ export default async function AdminPage() {
                 <Input name="domain" placeholder="student.example.ac.at" required />
                 <Button type="submit" size="sm">
                   Add email domain
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Pricing settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {pricingSettings.map((setting) => (
+                <form
+                  key={setting.key}
+                  action={async (formData) => {
+                    "use server";
+                    await updatePricingSettingAction(formData);
+                  }}
+                  className="space-y-2 rounded-2xl border border-slate-200 p-4"
+                >
+                  <input type="hidden" name="key" value={setting.key} />
+                  <p className="font-medium">{setting.key}</p>
+                  <p className="text-xs text-slate-500">
+                    {setting.description || "Configurable platform price"} · currently{" "}
+                    {formatEur(setting.amount_eur)}
+                  </p>
+                  <Input
+                    name="amountEur"
+                    type="number"
+                    step="0.01"
+                    min={0}
+                    defaultValue={setting.amount_eur}
+                    required
+                  />
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      name="isEnabled"
+                      value="true"
+                      defaultChecked={setting.is_enabled}
+                      className="size-4 rounded border border-input"
+                    />
+                    Enabled
+                  </label>
+                  <Button type="submit" size="sm">
+                    Save
+                  </Button>
+                </form>
+              ))}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Grant application credits</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form
+                action={async (formData) => {
+                  "use server";
+                  await grantApplicationCreditsAction(formData);
+                }}
+                className="space-y-3"
+              >
+                <Input name="profileId" placeholder="Profile UUID" required />
+                <Input name="amount" type="number" min={1} max={100} defaultValue={3} required />
+                <Input name="note" placeholder="Note (optional)" />
+                <Button type="submit" size="sm">
+                  Grant credits
                 </Button>
               </form>
             </CardContent>

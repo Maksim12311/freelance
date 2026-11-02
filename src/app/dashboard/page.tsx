@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { ModeSwitcher } from "@/components/shared/mode-switcher";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { requireProfile, isVerificationActive } from "@/lib/auth";
 import { VERIFICATION_STATUS_LABELS, WORK_ELIGIBILITY_LABELS } from "@/lib/constants";
@@ -63,15 +64,29 @@ export default async function DashboardPage() {
           </h1>
           <p className="mt-2 text-slate-600">Your StudentPro overview for Vienna collaborations.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="secondary">
-            Verification: {VERIFICATION_STATUS_LABELS[profile.verification_status]}
-          </Badge>
-          <Badge variant="outline">
-            Work eligibility: {WORK_ELIGIBILITY_LABELS[profile.work_eligibility_status]}
-          </Badge>
+        <div className="flex flex-col items-end gap-2">
+          <ModeSwitcher activeMode={profile.active_mode ?? "customer"} />
+          <div className="flex flex-wrap justify-end gap-2">
+            <Badge variant="secondary">
+              Verification: {VERIFICATION_STATUS_LABELS[profile.verification_status]}
+            </Badge>
+            <Badge variant="outline">
+              Work eligibility: {WORK_ELIGIBILITY_LABELS[profile.work_eligibility_status]}
+            </Badge>
+          </div>
         </div>
       </div>
+
+      {verified && (profile.active_mode ?? "customer") === "specialist" ? (
+        <Card className="border-sky-200 bg-sky-50/70">
+          <CardContent className="flex flex-wrap items-center justify-between gap-4 pt-6">
+            <p className="text-sm text-sky-950">
+              Specialist mode is active — manage offers, boosts, Plus, and recommended requests.
+            </p>
+            <Button render={<Link href="/dashboard/specialist" />}>Open specialist hub</Button>
+          </CardContent>
+        </Card>
+      ) : null}
 
       {!verified ? (
         <Card className="border-amber-200 bg-amber-50">

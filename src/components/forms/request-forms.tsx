@@ -108,12 +108,34 @@ export function CreateRequestForm({
   );
 }
 
-export function ApplicationForm({ requestId }: { requestId: string }) {
+export function ApplicationForm({
+  requestId,
+  feeFormatted = "€1.99",
+  feeEnabled = true,
+  credits = 0,
+}: {
+  requestId: string;
+  feeFormatted?: string;
+  feeEnabled?: boolean;
+  credits?: number;
+}) {
   const [state, action, pending] = useActionState(submitApplicationAction, null);
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="requestId" value={requestId} />
       <Result state={state} />
+      {feeEnabled ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-950">
+          <p className="font-medium">Application fee: {feeFormatted}</p>
+          <p className="mt-1 text-xs text-amber-800">
+            Charged once per request. Messaging unlocks after a successful application
+            {credits > 0
+              ? ` · ${credits} credit${credits === 1 ? "" : "s"} available`
+              : ""}
+            . Plus does not waive this fee.
+          </p>
+        </div>
+      ) : null}
       <div className="space-y-2">
         <Label htmlFor="introduction">Short introduction</Label>
         <Textarea id="introduction" name="introduction" required minLength={20} rows={4} />
@@ -133,10 +155,14 @@ export function ApplicationForm({ requestId }: { requestId: string }) {
         </div>
       </div>
       <p className="text-xs text-slate-500">
-        Applications are free in the MVP and are not a legally binding service agreement.
+        Applications are not a legally binding service agreement. You pay whether invited or not.
       </p>
       <Button type="submit" disabled={pending}>
-        {pending ? "Sending…" : "Send Application"}
+        {pending
+          ? "Processing…"
+          : feeEnabled
+            ? `Pay ${feeFormatted} & apply`
+            : "Send Application"}
       </Button>
     </form>
   );

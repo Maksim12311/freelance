@@ -51,7 +51,7 @@ export async function createRequestAction(
     return { ok: false, error: error?.message ?? "Could not create request" };
   }
 
-  redirect(`/requests/${data.id}`);
+  redirect(`/requests/${data.id}/suggestions`);
 }
 
 export async function closeRequestAction(requestId: string): Promise<ActionResult> {

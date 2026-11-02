@@ -242,3 +242,64 @@ export async function upsertUniversityDomainAction(
   revalidatePath("/admin");
   return { ok: true };
 }
+
+export async function updatePricingSettingAction(formData: FormData): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  const key = String(formData.get("key") || "").trim();
+  const amount = Number(formData.get("amountEur"));
+  const enabled = formData.get("isEnabled") === "on" || formData.get("isEnabled") === "true";
+
+  if (!key) return { ok: false, error: "Pricing key required" };
+  if (!Number.isFinite(amount) || amount < 0) {
+    return { ok: false, error: "Amount must be a non-negative number" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("pricing_settings")
+    .update({
+      amount_eur: amount,
+      is_enabled: enabled,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("key", key);
+
+  if (error) return { ok: false, error: error.message };
+  await audit(admin.id, "update_pricing", "pricing_settings", key, { amount, enabled });
+  revalidatePath("/admin");
+  return { ok: true, message: "Pricing updated" };
+}
+
+export async function grantApplicationCreditsAction(formData: FormData): Promise<ActionResult> {
+  const admin = await requireAdmin();
+  const profileId = String(formData.get("profileId") || "").trim();
+  const amount = Number(formData.get("amount"));
+  const note = String(formData.get("note") || "").trim() || null;
+
+  if (!profileId) return { ok: false, error: "Profile ID required" };
+  if (!Number.isInteger(amount) || amount < 1 || amount > 100) {
+    return { ok: false, error: "Grant between 1 and 100 credits" };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("application_credits").insert({
+    profile_id: profileId,
+    source: "admin",
+    remaining: amount,
+    initial_amount: amount,
+    note,
+  });
+  if (error) return { ok: false, error: error.message };
+
+  await supabase.from("notifications").insert({
+    profile_id: profileId,
+    type: "system",
+    title: "Application credits granted",
+    body: `An administrator granted you ${amount} application credit${amount === 1 ? "" : "s"}.`,
+    link_path: "/dashboard/specialist",
+  });
+
+  await audit(admin.id, "grant_application_credits", "profile", profileId, { amount, note });
+  revalidatePath("/admin");
+  return { ok: true, message: "Credits granted" };
+}
