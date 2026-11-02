@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   },
   description:
     "StudentPro is a private marketplace for verified university students in Vienna. Sign up, verify, then ask for help or offer your skills.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/logo.svg" }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -39,7 +39,11 @@ export function SiteMobileNav({ user, links, verified = false }: SiteMobileNavPr
       </SheetTrigger>
       <SheetContent side="right" className="w-[280px]">
         <SheetHeader>
-          <SheetTitle>StudentPro</SheetTitle>
+          <SheetTitle className="flex items-center gap-2.5">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" alt="" width={28} height={28} className="h-7 w-7 rounded-[9px]" />
+            StudentPro
+          </SheetTitle>
         </SheetHeader>
         <nav className="mt-6 flex flex-col gap-3">
           {links.map((item) => (

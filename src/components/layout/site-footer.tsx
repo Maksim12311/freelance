@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Logo } from "@/components/shared/logo";
+
 
 const footerLinks = [
   { href: "/about", label: "About" },
@@ -14,12 +16,12 @@ export function SiteFooter() {
     <footer className="mt-auto border-t border-[#f0d5db] bg-[#3a2a2f] text-white">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-14 sm:px-6 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm space-y-4">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e11d48] font-heading text-sm font-bold text-white">
-              S
-            </span>
-            <p className="font-heading text-lg font-semibold tracking-tight">StudentPro</p>
-          </div>
+          <Link href="/" className="inline-flex transition hover:opacity-90">
+            <Logo
+              wordmarkClassName="text-white"
+              markClassName="shadow-none"
+            />
+          </Link>
           <p className="text-sm leading-relaxed text-white/65">
             A private marketplace for verified university students in Vienna. We only connect
             people — we do not take payments for services.
