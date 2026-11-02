@@ -34,6 +34,7 @@ npm install
    - `supabase/migrations/20260322000001_initial_schema.sql`
    - `supabase/migrations/20260322000002_verification_sync_trigger.sql`
    - `supabase/migrations/20260322000003_privileged_helpers.sql`
+   - `supabase/migrations/20260322000004_private_marketplace_rls.sql`
 3. Run `supabase/seed.sql` for universities, approved email domains, categories, and skills.
 4. Confirm Storage buckets `verification-documents` (private), `avatars`, and `request-images` exist (created by the initial migration when `storage.buckets` is available).
 5. In Auth settings, add redirect URLs:
