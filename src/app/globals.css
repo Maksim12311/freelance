@@ -285,12 +285,33 @@
     background:
       radial-gradient(circle at 18% 20%, rgb(225 29 72 / 0.06), transparent 42%),
       radial-gradient(circle at 88% 10%, rgb(251 113 133 / 0.1), transparent 40%),
-      linear-gradient(180deg, #fff5f6 0%, #ffe8ec 100%);
+      transparent;
   }
   .petal-panel {
     background:
-      radial-gradient(circle at 80% 0%, rgb(255 255 255 / 0.7), transparent 45%),
-      linear-gradient(165deg, #fff5f6 0%, #ffe8ec 55%, #ffdce3 100%);
+      radial-gradient(circle at 80% 0%, rgb(255 255 255 / 0.55), transparent 45%),
+      transparent;
+  }
+  /* Continuous landing flow — no hard section bands */
+  .page-flow {
+    position: relative;
+    background:
+      radial-gradient(ellipse 80% 35% at 50% 18%, rgb(255 232 236 / 0.9), transparent 70%),
+      radial-gradient(ellipse 70% 30% at 20% 48%, rgb(255 240 242 / 0.85), transparent 65%),
+      radial-gradient(ellipse 70% 30% at 80% 62%, rgb(255 220 227 / 0.55), transparent 65%),
+      radial-gradient(ellipse 60% 28% at 40% 88%, rgb(255 232 236 / 0.7), transparent 70%),
+      linear-gradient(180deg, #fff5f6 0%, #ffffff 22%, #fff5f6 48%, #fff0f2 72%, #fff5f6 100%);
+  }
+  .flow-seam {
+    pointer-events: none;
+    height: 6rem;
+    margin-block: -3rem;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgb(255 245 246 / 0.55) 45%,
+      transparent 100%
+    );
   }
 }
 
