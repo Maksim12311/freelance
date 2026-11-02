@@ -38,7 +38,7 @@ export default async function SignupPage({
               Already have an account?{" "}
               <Link
                 href={`/login?next=${encodeURIComponent(next)}`}
-                className="font-medium text-[#2563EB]"
+                className="font-medium text-[#e11d48]"
               >
                 Log in
               </Link>

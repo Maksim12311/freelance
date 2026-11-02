@@ -80,20 +80,18 @@ export function SignupForm({
           id="universityId"
           name="universityId"
           required
-          className="flex h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+          defaultValue=""
+          className="flex h-11 w-full rounded-xl border border-[#f0d5db] bg-white px-3 text-sm text-[#2a2124] outline-none focus-visible:border-[#e11d48] focus-visible:ring-3 focus-visible:ring-[#e11d48]/25 dark:bg-card"
         >
-          <option value="">Select university</option>
+          <option value="" disabled>
+            Select university
+          </option>
           {universities.map((u) => (
             <option key={u.id} value={u.id}>
               {u.name}
             </option>
           ))}
         </select>
-        {!universities.length ? (
-          <p className="text-xs text-slate-500">
-            Load universities via Supabase seed after configuring credentials.
-          </p>
-        ) : null}
       </div>
       <label className="flex items-start gap-2 text-sm text-slate-600">
         <input
@@ -105,7 +103,7 @@ export function SignupForm({
         />
         <span>
           I agree to the{" "}
-          <Link href="/legal/terms" className="text-[#2563EB] underline">
+          <Link href="/legal/terms" className="text-[#e11d48] underline">
             Terms of Service
           </Link>
           .
@@ -121,13 +119,17 @@ export function SignupForm({
         />
         <span>
           I acknowledge the{" "}
-          <Link href="/legal/privacy" className="text-[#2563EB] underline">
+          <Link href="/legal/privacy" className="text-[#e11d48] underline">
             Privacy Policy
           </Link>
           .
         </span>
       </label>
-      <Button type="submit" className="w-full bg-[#2563EB] hover:bg-blue-700" disabled={pending}>
+      <Button
+        type="submit"
+        className="w-full rounded-xl bg-[#e11d48] hover:bg-[#be123c]"
+        disabled={pending}
+      >
         {pending ? "Creating account…" : "Create account"}
       </Button>
     </form>
