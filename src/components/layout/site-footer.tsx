@@ -1,71 +1,46 @@
 import Link from "next/link";
 
-const footerLinks = [
-  {
-    title: "Product",
-    items: [
-      { href: "/about", label: "About" },
-      { href: "/how-it-works", label: "How It Works" },
-      { href: "/safety", label: "Safety" },
-      { href: "/contact", label: "Contact" },
-    ],
-  },
-  {
-    title: "Legal",
-    items: [
-      { href: "/legal/terms", label: "Terms of Service" },
-      { href: "/legal/privacy", label: "Privacy Policy" },
-      { href: "/legal/impressum", label: "Impressum" },
-      { href: "/legal/community-guidelines", label: "Community Guidelines" },
-      { href: "/legal/moderation", label: "Reporting & Moderation" },
-    ],
-  },
-];
-
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-[#d7e3ef] bg-[#0b1220] text-white">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563EB] font-heading text-sm font-bold">
-              S
-            </span>
-            <span className="font-heading text-lg font-semibold tracking-tight">StudentPro</span>
-          </div>
-          <p className="max-w-sm text-sm leading-relaxed text-white/65">
-            Students Helping Students. A Vienna marketplace that connects university students —
-            without employing them or processing service payments.
-          </p>
-          <p className="text-xs leading-relaxed text-white/40">
-            Draft legal pages require review by a qualified Austrian legal professional before
-            public launch.
+    <footer className="mt-auto border-t border-slate-200 bg-slate-50">
+      <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-10 sm:px-6 md:flex-row md:justify-between">
+        <div className="max-w-sm space-y-2">
+          <p className="font-heading text-base font-bold">StudentPro</p>
+          <p className="text-sm text-slate-600">
+            Students helping students in Vienna. We only connect people — we do not take payments
+            for services.
           </p>
         </div>
-        {footerLinks.map((group) => (
-          <div key={group.title}>
-            <h3 className="mb-4 font-heading text-sm font-semibold tracking-wide text-white/90">
-              {group.title}
-            </h3>
-            <ul className="space-y-2.5">
-              {group.items.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-sm text-white/55 transition hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        <div className="grid grid-cols-2 gap-8 text-sm">
+          <div className="space-y-2">
+            <p className="font-medium text-slate-900">Site</p>
+            <Link href="/how-it-works" className="block text-slate-600 hover:text-slate-900">
+              How it works
+            </Link>
+            <Link href="/safety" className="block text-slate-600 hover:text-slate-900">
+              Safety
+            </Link>
+            <Link href="/contact" className="block text-slate-600 hover:text-slate-900">
+              Contact
+            </Link>
           </div>
-        ))}
+          <div className="space-y-2">
+            <p className="font-medium text-slate-900">Legal</p>
+            <Link href="/legal/terms" className="block text-slate-600 hover:text-slate-900">
+              Terms
+            </Link>
+            <Link href="/legal/privacy" className="block text-slate-600 hover:text-slate-900">
+              Privacy
+            </Link>
+            <Link href="/legal/impressum" className="block text-slate-600 hover:text-slate-900">
+              Impressum
+            </Link>
+          </div>
+        </div>
       </div>
-      <div className="border-t border-white/10">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <span>© 2026 StudentPro (draft operator entity).</span>
-          <span>Vienna, Austria · EUR (€)</span>
+      <div className="border-t border-slate-200">
+        <div className="mx-auto flex w-full max-w-5xl px-4 py-4 text-xs text-slate-500 sm:px-6">
+          © 2026 StudentPro · Vienna
         </div>
       </div>
     </footer>

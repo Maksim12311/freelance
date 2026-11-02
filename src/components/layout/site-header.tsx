@@ -1,12 +1,11 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SiteMobileNav } from "@/components/layout/site-mobile-nav";
-import { cn } from "@/lib/utils";
 
 const nav = [
-  { href: "/requests", label: "Find Requests" },
-  { href: "/students", label: "Find Students" },
-  { href: "/how-it-works", label: "How It Works" },
+  { href: "/requests", label: "Find help" },
+  { href: "/students", label: "Find students" },
+  { href: "/how-it-works", label: "How it works" },
 ];
 
 type SiteHeaderProps = {
@@ -14,34 +13,20 @@ type SiteHeaderProps = {
   tone?: "light" | "hero";
 };
 
-export function SiteHeader({ user, tone = "light" }: SiteHeaderProps) {
-  const hero = tone === "hero";
-
+export function SiteHeader({ user }: SiteHeaderProps) {
   return (
-    <header
-      className={cn(
-        "z-40 backdrop-blur-xl",
-        hero
-          ? "absolute inset-x-0 top-0 border-b border-[#0b1220]/08 bg-[#f7fbff]/55"
-          : "sticky top-0 border-b border-[#d7e3ef] bg-[#f7fbff]/85",
-      )}
-    >
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-        <div className="flex items-center gap-8">
-          <Link href="/" className="group flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563EB] font-heading text-sm font-bold text-white transition duration-300 group-hover:rotate-6">
-              S
-            </span>
-            <span className="font-heading text-lg font-semibold tracking-tight text-[#0b1220]">
-              StudentPro
-            </span>
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
+      <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="font-heading text-lg font-bold text-slate-900">
+            StudentPro
           </Link>
-          <nav className="hidden items-center gap-6 md:flex">
+          <nav className="hidden items-center gap-4 md:flex">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-sm font-medium text-[#5b6b7c] transition hover:text-[#0b1220]"
+                className="text-sm text-slate-600 hover:text-slate-900"
               >
                 {item.label}
               </Link>
@@ -58,19 +43,19 @@ export function SiteHeader({ user, tone = "light" }: SiteHeaderProps) {
                 </Button>
               ) : null}
               <Button variant="ghost" size="sm" render={<Link href="/dashboard" />}>
-                Dashboard
+                My account
               </Button>
-              <Button size="sm" className="rounded-xl" render={<Link href="/requests/new" />}>
-                Post a Request
+              <Button size="sm" render={<Link href="/requests/new" />}>
+                Ask for help
               </Button>
             </>
           ) : (
             <>
               <Button variant="ghost" size="sm" render={<Link href="/login" />}>
-                Login
+                Log in
               </Button>
-              <Button size="sm" className="rounded-xl" render={<Link href="/signup" />}>
-                Sign Up
+              <Button size="sm" render={<Link href="/signup" />}>
+                Sign up
               </Button>
             </>
           )}
