@@ -1,0 +1,12 @@
+# Minimal Supabase CLI config for local/linked projects.
+# Apply migrations with the Supabase SQL editor or:
+#   supabase db push
+
+[project]
+id = "studentpro"
+
+[db]
+major_version = 15
+
+[auth]
+enabled = true
