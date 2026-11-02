@@ -32,7 +32,7 @@ export function Reveal({
           observer.disconnect();
         }
       },
-      { threshold: 0.06, rootMargin: "0px 0px -6% 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px -8% 0px" },
     );
 
     observer.observe(node);
@@ -43,8 +43,10 @@ export function Reveal({
     <div
       ref={ref}
       className={cn(
-        "will-change-[opacity,transform] transition-[opacity,transform] duration-[1000ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-        visible ? "translate-y-0 opacity-100" : "translate-y-7 opacity-0",
+        "will-change-[opacity,transform,filter] transition-[opacity,transform,filter] duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]",
+        visible
+          ? "translate-y-0 scale-100 opacity-100 blur-0"
+          : "translate-y-8 scale-[0.985] opacity-0 blur-[3px]",
         className,
       )}
       style={{ transitionDelay: `${delay}ms` }}

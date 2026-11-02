@@ -11,7 +11,7 @@ const footerLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-[#edd9cb] bg-stone-950 text-white">
+    <footer className="mt-auto border-t border-[#f0d5db] bg-[#3a2a2f] text-white">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-14 sm:px-6 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm space-y-4">
           <div className="flex items-center gap-2.5">

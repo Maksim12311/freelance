@@ -20,14 +20,14 @@ export function SiteHeader({ user }: SiteHeaderProps) {
     : PUBLIC_NAV_LINKS.map((l) => ({ href: l.href, label: l.label }));
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#edd9cb]/80 bg-[#fff8f3]/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-[#f0d5db]/80 bg-[#fff5f6]/90 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-7">
           <Link href="/" className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#e11d48] font-heading text-sm font-bold text-white shadow-[0_8px_20px_-10px_rgba(225,29,72,0.95)]">
               S
             </span>
-            <span className="font-heading text-lg font-semibold tracking-tight text-stone-900">
+            <span className="font-heading text-lg font-semibold tracking-tight text-[#2a2124]">
               StudentPro
             </span>
           </Link>
@@ -36,7 +36,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
               <Link
                 key={`${item.href}-${item.label}`}
                 href={item.href}
-                className="text-sm font-medium text-stone-600 transition hover:text-[#e11d48]"
+                className="text-sm font-medium text-[#6f5f64] transition hover:text-[#e11d48]"
               >
                 {item.label}
               </Link>
@@ -55,7 +55,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
             ) : (
               <Button
                 size="sm"
-                className="rounded-xl bg-[#e11d48] hover:bg-rose-700"
+                className="rounded-xl bg-[#e11d48] hover:bg-[#be123c]"
                 render={<Link href="/verify-student" />}
               >
                 Complete verification
@@ -63,12 +63,17 @@ export function SiteHeader({ user }: SiteHeaderProps) {
             )
           ) : (
             <>
-              <Button variant="ghost" size="sm" render={<Link href="/login" />}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[#6f5f64] hover:text-[#e11d48]"
+                render={<Link href="/login" />}
+              >
                 Log In
               </Button>
               <Button
                 size="sm"
-                className="rounded-xl bg-[#e11d48] hover:bg-rose-700"
+                className="rounded-xl bg-[#e11d48] hover:bg-[#be123c]"
                 render={<Link href="/signup" />}
               >
                 Join Now
