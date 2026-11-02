@@ -21,24 +21,24 @@ export function RequestCard({ request }: { request: RequestCardData }) {
   return (
     <Link
       href={`/requests/${request.id}`}
-      className="block rounded-2xl bg-white p-5 shadow-[0_14px_30px_-24px_rgba(37,99,235,0.55)] ring-1 ring-[#dbe7f5] transition hover:-translate-y-0.5 hover:ring-[#93c5fd]"
+      className="block h-full rounded-2xl bg-white p-5 shadow-[0_14px_30px_-24px_rgba(225,29,72,0.45)] ring-1 ring-[#f0e4d7] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_-24px_rgba(225,29,72,0.55)] hover:ring-rose-200"
     >
       <div className="flex flex-wrap items-center gap-2 text-xs">
         {request.category ? (
-          <span className="rounded-md bg-[#eaf2ff] px-2 py-1 font-medium text-[#1e3a8a]">
+          <span className="rounded-md bg-[#ffedd5] px-2 py-1 font-medium text-[#9a3412]">
             {request.category.name}
           </span>
         ) : null}
-        <span className="capitalize text-slate-500">{request.status.replace("_", " ")}</span>
+        <span className="capitalize text-stone-500">{request.status.replace("_", " ")}</span>
         {request.owner?.verification_status === "verified" ? (
-          <span className="font-medium text-[#0f766e]">Verified</span>
+          <span className="font-medium text-[#0284c7]">Verified</span>
         ) : null}
       </div>
-      <h3 className="mt-3 font-heading text-lg font-semibold text-slate-900">{request.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-600">
+      <h3 className="mt-3 font-heading text-lg font-semibold text-stone-900">{request.title}</h3>
+      <p className="mt-2 text-sm leading-relaxed text-stone-600">
         {truncate(request.description, 120)}
       </p>
-      <p className="mt-4 text-xs text-slate-500">
+      <p className="mt-4 text-xs text-stone-500">
         {request.suggested_budget_eur != null
           ? formatBudget(request.suggested_budget_eur)
           : "Budget open"}
