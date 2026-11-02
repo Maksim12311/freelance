@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import type { Category, Profile, University } from "@/types/database";
 
 export const DEMO_COOKIE = "studentpro_demo_session";
+export const DEMO_MODE_COOKIE = "studentpro_demo_mode";
 
 export const DEMO_PROFILE_ID = "22222222-2222-4222-8222-222222222201";
 export const DEMO_UNIVERSITY_ID = "11111111-1111-4111-8111-111111111101";
@@ -267,9 +268,34 @@ export async function getDemoSession(): Promise<boolean> {
   }
 }
 
+export async function getDemoActiveMode(): Promise<"customer" | "specialist"> {
+  try {
+    const jar = await cookies();
+    const value = jar.get(DEMO_MODE_COOKIE)?.value;
+    return value === "specialist" ? "specialist" : "customer";
+  } catch {
+    return "customer";
+  }
+}
+
+export async function setDemoActiveMode(mode: "customer" | "specialist") {
+  const jar = await cookies();
+  jar.set(DEMO_MODE_COOKIE, mode, {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
+}
+
 export async function getDemoProfile(): Promise<Profile | null> {
   if (!(await getDemoSession())) return null;
-  return { ...DEMO_PROFILE };
+  const active_mode = await getDemoActiveMode();
+  return {
+    ...DEMO_PROFILE,
+    active_mode,
+    is_specialist_enabled: true,
+  };
 }
 
 export function demoUniversities(): University[] {

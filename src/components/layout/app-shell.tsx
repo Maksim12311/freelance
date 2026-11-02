@@ -16,25 +16,31 @@ type AppShellProps = {
 };
 
 /**
- * Persistent marketplace chrome: left tab menu (desktop) + bottom tabs (mobile).
- * No duplicate top navigation — only a slim context bar.
+ * Persistent marketplace chrome with mode-specific left menu.
  */
 export function AppShell({ children, user }: AppShellProps) {
+  const mode = user.activeMode ?? "customer";
+
   return (
     <div className="flex min-h-full flex-1">
-      <AppSidebar userName={user.displayName} isAdmin={user.isAdmin} />
+      <AppSidebar userName={user.displayName} isAdmin={user.isAdmin} activeMode={mode} />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 border-b border-[#f0d5db]/80 bg-[#fff5f6]/90 backdrop-blur-xl md:bg-white/75">
           <div className="flex h-14 items-center justify-between gap-3 px-4 sm:px-6">
-            <Link href="/dashboard" className="md:hidden">
+            <Link
+              href={mode === "specialist" ? "/dashboard/specialist" : "/dashboard"}
+              className="md:hidden"
+            >
               <Logo />
             </Link>
             <p className="hidden text-sm text-[#6f5f64] md:block">
-              Vienna student marketplace
+              {mode === "specialist"
+                ? "You’re offering skills"
+                : "You’re looking for help"}
             </p>
             <div className="ml-auto flex items-center gap-3">
-              <ModeSwitcher activeMode={user.activeMode ?? "customer"} />
+              <ModeSwitcher activeMode={mode} />
             </div>
           </div>
         </header>
@@ -43,7 +49,7 @@ export function AppShell({ children, user }: AppShellProps) {
           {children}
         </main>
 
-        <AppMobileTabs />
+        <AppMobileTabs activeMode={mode} />
       </div>
     </div>
   );

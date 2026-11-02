@@ -2,7 +2,6 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ModeSwitcher } from "@/components/shared/mode-switcher";
 import { MatchReasons } from "@/components/shared/match-reasons";
 import { EmptyState } from "@/components/shared/empty-state";
 import { requireVerifiedStudent } from "@/lib/auth";
@@ -16,6 +15,7 @@ import { declineInvitationAction } from "@/lib/actions/invitations";
 import { getRecommendedRequestsForSpecialist } from "@/lib/matching-data";
 import { getPricingSetting, formatEur } from "@/lib/pricing";
 import { hasActiveBoost, hasActivePlus, countApplicationCredits } from "@/lib/payments";
+import { isDemoMode, setDemoActiveMode } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 import { formatBudget, formatRelativeDate } from "@/lib/utils";
 import { PortfolioAddForm, SpecialistProfileForm } from "@/components/forms/specialist-forms";
@@ -26,11 +26,15 @@ export default async function SpecialistDashboardPage() {
   let profile = await requireVerifiedStudent("/dashboard/specialist");
   const supabase = await createClient();
 
-  if (!profile.is_specialist_enabled || profile.active_mode !== "specialist") {
-    await supabase
-      .from("profiles")
-      .update({ is_specialist_enabled: true, active_mode: "specialist" })
-      .eq("id", profile.id);
+  if (profile.active_mode !== "specialist") {
+    if (isDemoMode()) {
+      await setDemoActiveMode("specialist");
+    } else {
+      await supabase
+        .from("profiles")
+        .update({ is_specialist_enabled: true, active_mode: "specialist" })
+        .eq("id", profile.id);
+    }
     profile = {
       ...profile,
       is_specialist_enabled: true,
@@ -96,14 +100,13 @@ export default async function SpecialistDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Specialist mode</h1>
-          <p className="mt-2 text-slate-600">
-            Offer services, apply to requests, boost visibility, and track real performance.
-          </p>
-        </div>
-        <ModeSwitcher activeMode={profile.active_mode ?? "specialist"} />
+      <div>
+        <h1 className="font-heading text-3xl font-semibold tracking-tight text-[#2a2124]">
+          Specialist hub
+        </h1>
+        <p className="mt-2 text-[#6f5f64]">
+          Offer services, apply to requests, boost visibility, and track real performance.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-4">

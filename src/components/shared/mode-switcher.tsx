@@ -31,13 +31,17 @@ export function ModeSwitcher({
             role="tab"
             aria-selected={active}
             disabled={pending || active}
-            onClick={() => startTransition(() => void switchModeAction(mode))}
+            onClick={() =>
+              startTransition(() => {
+                void switchModeAction(mode);
+              })
+            }
             className={cn(
               "rounded-full px-3.5 py-1.5 font-medium capitalize transition duration-300",
               active
                 ? "bg-[#e11d48] text-white shadow-sm"
                 : "text-[#6f5f64] hover:text-[#2a2124]",
-              pending && !active ? "opacity-60" : "",
+              pending ? "opacity-60" : "",
             )}
           >
             {mode}

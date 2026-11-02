@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ModeSwitcher } from "@/components/shared/mode-switcher";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { requireProfile, isVerificationActive } from "@/lib/auth";
 import { DEMO_REQUESTS, DEMO_STUDENTS, isDemoMode } from "@/lib/demo";
@@ -222,12 +221,9 @@ export default async function DashboardPage() {
               </Button>
             </div>
           </div>
-          <div className="flex flex-col items-end gap-3">
-            <ModeSwitcher activeMode={mode} />
-            <p className="max-w-[14rem] text-right text-xs text-[#6f5f64]">
-              One account · switch freely between asking for help and offering skills.
-            </p>
-          </div>
+          <p className="max-w-[15rem] text-right text-xs leading-relaxed text-[#6f5f64]">
+            Use Customer / Specialist in the top bar — the left menu changes with your role.
+          </p>
         </div>
       </section>
 
