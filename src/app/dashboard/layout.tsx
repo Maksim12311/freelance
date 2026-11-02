@@ -20,9 +20,9 @@ export default async function DashboardLayout({
           verified,
         }}
       />
-      <div className="mx-auto flex w-full max-w-6xl flex-1">
+      <div className="mx-auto flex w-full max-w-6xl flex-1 gap-2 px-2 sm:px-4">
         <DashboardSidebar />
-        <div className="min-w-0 flex-1 px-4 py-8 sm:px-6">{children}</div>
+        <div className="min-w-0 flex-1 px-2 py-8 sm:px-4">{children}</div>
       </div>
     </>
   );

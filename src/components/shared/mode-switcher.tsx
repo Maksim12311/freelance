@@ -16,26 +16,34 @@ export function ModeSwitcher({
   return (
     <div
       className={cn(
-        "inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 text-sm",
+        "inline-flex rounded-full border border-[#f0d5db] bg-white/90 p-1 text-sm shadow-sm",
         className,
       )}
+      role="tablist"
+      aria-label="Account mode"
     >
-      {(["customer", "specialist"] as const).map((mode) => (
-        <button
-          key={mode}
-          type="button"
-          disabled={pending || activeMode === mode}
-          onClick={() => startTransition(() => void switchModeAction(mode))}
-          className={cn(
-            "rounded-lg px-3 py-1.5 font-medium capitalize transition",
-            activeMode === mode
-              ? "bg-white text-slate-900 shadow-sm"
-              : "text-slate-500 hover:text-slate-800",
-          )}
-        >
-          {mode} mode
-        </button>
-      ))}
+      {(["customer", "specialist"] as const).map((mode) => {
+        const active = activeMode === mode;
+        return (
+          <button
+            key={mode}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            disabled={pending || active}
+            onClick={() => startTransition(() => void switchModeAction(mode))}
+            className={cn(
+              "rounded-full px-3.5 py-1.5 font-medium capitalize transition duration-300",
+              active
+                ? "bg-[#e11d48] text-white shadow-sm"
+                : "text-[#6f5f64] hover:text-[#2a2124]",
+              pending && !active ? "opacity-60" : "",
+            )}
+          >
+            {mode}
+          </button>
+        );
+      })}
     </div>
   );
 }
