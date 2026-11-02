@@ -1,6 +1,6 @@
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { getCurrentProfile } from "@/lib/auth";
+import { getCurrentProfile, isVerificationActive } from "@/lib/auth";
 
 export async function PublicShell({
   children,
@@ -10,6 +10,8 @@ export async function PublicShell({
   tone?: "light" | "hero";
 }) {
   const profile = await getCurrentProfile();
+  const verified = profile ? isVerificationActive(profile) || profile.is_admin : false;
+
   return (
     <>
       <SiteHeader
@@ -20,6 +22,7 @@ export async function PublicShell({
                 id: profile.id,
                 displayName: profile.display_name,
                 isAdmin: profile.is_admin,
+                verified,
               }
             : null
         }

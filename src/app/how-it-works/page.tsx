@@ -45,8 +45,11 @@ export default function HowItWorksPage() {
 
         <div className="flex flex-wrap gap-3">
           <Button render={<Link href="/signup" />}>Sign up</Button>
-          <Button variant="outline" render={<Link href="/requests" />}>
-            Browse requests
+          <Button
+            variant="outline"
+            render={<Link href={`/signup?next=${encodeURIComponent("/requests")}`} />}
+          >
+            Sign up to browse requests
           </Button>
         </div>
       </div>

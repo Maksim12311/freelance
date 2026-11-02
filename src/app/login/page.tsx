@@ -29,7 +29,14 @@ export default async function LoginPage({
             <LoginForm nextPath={params.next} />
             <p className="text-center text-sm text-slate-600">
               New here?{" "}
-              <Link href="/signup" className="font-medium text-[#2563EB]">
+              <Link
+                href={
+                  params.next
+                    ? `/signup?next=${encodeURIComponent(params.next)}`
+                    : "/signup"
+                }
+                className="font-medium text-[#2563EB]"
+              >
                 Sign up
               </Link>
             </p>

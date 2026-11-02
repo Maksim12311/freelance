@@ -63,7 +63,9 @@ export async function signupAction(
     return { ok: false, error: error.message };
   }
 
-  redirect("/verify-student");
+  const nextRaw = String(formData.get("next") || "/dashboard");
+  const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/dashboard";
+  redirect(`/verify-student?next=${encodeURIComponent(next)}`);
 }
 
 export async function loginAction(
@@ -85,7 +87,7 @@ export async function loginAction(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
@@ -94,8 +96,31 @@ export async function loginAction(
     return { ok: false, error: error.message };
   }
 
-  const next = String(formData.get("next") || "/dashboard");
-  redirect(next.startsWith("/") ? next : "/dashboard");
+  const nextRaw = String(formData.get("next") || "/dashboard");
+  const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/dashboard";
+
+  const userId = signInData.user?.id;
+  if (userId) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("verification_status, verification_expires_at, is_suspended, is_admin")
+      .eq("id", userId)
+      .maybeSingle();
+
+    const verified =
+      profile &&
+      !profile.is_suspended &&
+      (profile.is_admin ||
+        (profile.verification_status === "verified" &&
+          (!profile.verification_expires_at ||
+            new Date(profile.verification_expires_at).getTime() > Date.now())));
+
+    if (!verified) {
+      redirect(`/verify-student?next=${encodeURIComponent(next)}`);
+    }
+  }
+
+  redirect(next);
 }
 
 export async function logoutAction() {

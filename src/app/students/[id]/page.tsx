@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCurrentProfile, isVerificationActive } from "@/lib/auth";
+import { isVerificationActive, requireVerifiedStudent } from "@/lib/auth";
 import { startConversationAction } from "@/lib/actions/messages";
 import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
@@ -20,6 +20,8 @@ export default async function StudentProfilePage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const current = await requireVerifiedStudent(`/students/${id}`);
+
   if (!hasSupabaseEnv()) {
     return (
       <PublicShell>
@@ -31,7 +33,6 @@ export default async function StudentProfilePage({
   }
 
   const supabase = await createClient();
-  const current = await getCurrentProfile();
   const { data: student } = await supabase
     .from("profiles")
     .select(

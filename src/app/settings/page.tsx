@@ -2,7 +2,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { SettingsForms } from "@/components/forms/settings-forms";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { requireProfile } from "@/lib/auth";
+import { isVerificationActive, requireProfile } from "@/lib/auth";
 import { getUniversities, hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -10,6 +10,7 @@ export const metadata = { title: "Settings" };
 
 export default async function SettingsPage() {
   const profile = await requireProfile("/settings");
+  const verified = isVerificationActive(profile) || profile.is_admin;
   const universities = await getUniversities();
   let skills: { id: string; name: string }[] = [];
   let selectedSkillIds: string[] = [];
@@ -41,6 +42,7 @@ export default async function SettingsPage() {
           id: profile.id,
           displayName: profile.display_name,
           isAdmin: profile.is_admin,
+          verified,
         }}
       />
       <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10 sm:px-6">

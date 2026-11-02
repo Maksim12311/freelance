@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s · StudentPro",
   },
   description:
-    "StudentPro connects university students in Vienna. Find help or offer your skills. No service payments on the platform.",
+    "StudentPro is a private marketplace for verified university students in Vienna. Sign up, verify, then ask for help or offer your skills.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -4,7 +4,7 @@ import { PlatformNotice } from "@/components/shared/platform-notice";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { requireVerifiedStudent } from "@/lib/auth";
+import { isVerificationActive, requireVerifiedStudent } from "@/lib/auth";
 import { markConversationReadAction, sendMessageAction } from "@/lib/actions/messages";
 import { createClient } from "@/lib/supabase/server";
 import { cn, formatRelativeDate } from "@/lib/utils";
@@ -17,6 +17,7 @@ export default async function MessagesPage({
   searchParams: Promise<{ c?: string }>;
 }) {
   const profile = await requireVerifiedStudent("/messages");
+  const verified = isVerificationActive(profile) || profile.is_admin;
   const { c: activeId } = await searchParams;
   const supabase = await createClient();
 
@@ -77,6 +78,7 @@ export default async function MessagesPage({
           id: profile.id,
           displayName: profile.display_name,
           isAdmin: profile.is_admin,
+          verified,
         }}
       />
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">

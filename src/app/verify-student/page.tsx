@@ -1,16 +1,31 @@
+import { redirect } from "next/navigation";
 import { PublicShell } from "@/components/layout/public-shell";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { VerificationForms } from "@/components/forms/verification-forms";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { requireProfile } from "@/lib/auth";
+import { isVerificationActive, requireProfile } from "@/lib/auth";
 import { VERIFICATION_STATUS_LABELS } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Verify Student Status" };
 
-export default async function VerifyStudentPage() {
+export default async function VerifyStudentPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
   const profile = await requireProfile("/verify-student");
+  const params = await searchParams;
+  const next =
+    params.next && params.next.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : "/dashboard";
+
+  if (isVerificationActive(profile) || profile.is_admin) {
+    redirect(next);
+  }
+
   const supabase = await createClient();
   const { data: latest } = await supabase
     .from("student_verifications")
@@ -24,14 +39,22 @@ export default async function VerifyStudentPage() {
     <PublicShell>
       <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-12 sm:px-6">
         <div className="space-y-3">
-          <h1 className="text-3xl font-semibold tracking-tight">Verify your student status</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Verification required
+          </h1>
           <p className="text-slate-600">
-            Only verified students can publish requests, respond to requests, and access direct
-            messaging.
+            StudentPro is a private marketplace. Only verified students can browse requests,
+            view student profiles, message others, apply, or post a request.
           </p>
           <Badge variant="secondary">
             Current status: {VERIFICATION_STATUS_LABELS[profile.verification_status]}
           </Badge>
+          {params.next ? (
+            <p className="text-sm text-slate-500">
+              After verification you will continue to{" "}
+              <span className="font-medium text-slate-700">{next}</span>.
+            </p>
+          ) : null}
         </div>
 
         <PlatformNotice title="Verification is not work authorization">
@@ -50,6 +73,14 @@ export default async function VerifyStudentPage() {
                 {latest.rejection_reason ? ` · ${latest.rejection_reason}` : ""}
               </CardDescription>
             </CardHeader>
+            {latest.status === "pending_review" ? (
+              <CardContent>
+                <p className="text-sm text-slate-600">
+                  Your submission is waiting for review. Marketplace access unlocks after
+                  approval.
+                </p>
+              </CardContent>
+            ) : null}
           </Card>
         ) : null}
 

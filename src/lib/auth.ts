@@ -5,6 +5,11 @@ import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
 
+function safeInternalPath(path: string | undefined, fallback: string) {
+  if (!path || !path.startsWith("/") || path.startsWith("//")) return fallback;
+  return path;
+}
+
 export async function getCurrentUser(): Promise<User | null> {
   if (!hasSupabaseEnv()) return null;
   try {
@@ -66,14 +71,12 @@ export async function requireUser(
 }
 
 /** Require an authenticated user with a loaded profile row. */
-export async function requireProfile(redirectTo = "/login"): Promise<Profile> {
-  const next =
-    redirectTo.startsWith("/") && !redirectTo.startsWith("/login")
-      ? `/login?next=${encodeURIComponent(redirectTo)}`
-      : redirectTo;
-  const { profile } = await requireUser(next);
+export async function requireProfile(intendedPath = "/dashboard"): Promise<Profile> {
+  const destination = safeInternalPath(intendedPath, "/dashboard");
+  const loginUrl = `/login?next=${encodeURIComponent(destination)}`;
+  const { profile } = await requireUser(loginUrl);
   if (!profile) {
-    redirect(next);
+    redirect(loginUrl);
   }
   if (profile.is_suspended) {
     redirect("/login?error=suspended");
@@ -88,16 +91,23 @@ export function isVerificationActive(profile: Profile): boolean {
   return new Date(profile.verification_expires_at).getTime() > Date.now();
 }
 
+/**
+ * Require a verified (non-suspended) student.
+ * Unauthenticated → /login?next=<intended>
+ * Unverified → /verify-student?next=<intended>
+ * Admins bypass verification for moderation.
+ */
 export async function requireVerifiedStudent(
-  redirectTo = "/verify-student",
+  intendedPath = "/dashboard",
 ): Promise<Profile> {
-  const profile = await requireProfile(redirectTo);
+  const destination = safeInternalPath(intendedPath, "/dashboard");
+  const profile = await requireProfile(destination);
 
-  if (!isVerificationActive(profile)) {
-    redirect(redirectTo);
+  if (profile.is_admin || isVerificationActive(profile)) {
+    return profile;
   }
 
-  return profile;
+  redirect(`/verify-student?next=${encodeURIComponent(destination)}`);
 }
 
 export async function requireAdmin(redirectTo = "/dashboard"): Promise<Profile> {

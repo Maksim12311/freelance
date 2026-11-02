@@ -4,6 +4,7 @@ import { RequestCard } from "@/components/shared/request-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { requireVerifiedStudent } from "@/lib/auth";
 import { getCategories, hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -14,6 +15,7 @@ export default async function RequestsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
+  await requireVerifiedStudent("/requests");
   const params = await searchParams;
   const page = Math.max(1, Number(params.page || 1));
   const pageSize = 12;

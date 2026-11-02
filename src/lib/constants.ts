@@ -19,9 +19,23 @@ export const DOCUMENT_RETENTION_DAYS = Number(
   process.env.DOCUMENT_RETENTION_DAYS ?? 90,
 );
 
-export const NAV_LINKS = [
-  { href: "/requests", label: "Find Requests" },
+/** Public marketing nav (guests). */
+export const PUBLIC_NAV_LINKS = [
+  { href: "/how-it-works", label: "How It Works" },
+] as const;
+
+/** Full marketplace nav (verified students). */
+export const VERIFIED_NAV_LINKS = [
+  { href: "/requests", label: "Find Help" },
   { href: "/students", label: "Find Students" },
+  { href: "/requests/new", label: "Post a Request" },
+  { href: "/messages", label: "Messages" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/settings", label: "Profile" },
+] as const;
+
+/** @deprecated Use PUBLIC_NAV_LINKS / VERIFIED_NAV_LINKS */
+export const NAV_LINKS = [
   { href: "/how-it-works", label: "How It Works" },
 ] as const;
 
@@ -31,12 +45,22 @@ export const AUTH_LINKS = {
   resetPassword: "/reset-password",
 } as const;
 
+/** Marketplace routes that require a verified student. */
+export const MARKETPLACE_ROUTES = [
+  "/requests",
+  "/students",
+  "/messages",
+  "/dashboard",
+] as const;
+
+/** Auth-required routes (login; verification not always required). */
 export const PROTECTED_ROUTES = [
   "/dashboard",
   "/messages",
   "/settings",
   "/verify-student",
-  "/requests/new",
+  "/requests",
+  "/students",
   "/admin",
 ] as const;
 

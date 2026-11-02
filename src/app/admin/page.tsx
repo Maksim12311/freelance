@@ -76,7 +76,12 @@ export default async function AdminPage() {
   return (
     <>
       <SiteHeader
-        user={{ id: admin.id, displayName: admin.display_name, isAdmin: true }}
+        user={{
+          id: admin.id,
+          displayName: admin.display_name,
+          isAdmin: true,
+          verified: true,
+        }}
       />
       <div className="mx-auto w-full max-w-6xl space-y-8 px-4 py-10 sm:px-6">
         <div>

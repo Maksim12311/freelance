@@ -7,7 +7,7 @@ import { ApplicationForm, ReportForm } from "@/components/forms/request-forms";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getCurrentProfile, isVerificationActive } from "@/lib/auth";
+import { isVerificationActive, requireVerifiedStudent } from "@/lib/auth";
 import { closeRequestAction, saveRequestAction, selectPreferredApplicantAction } from "@/lib/actions/requests";
 import { startConversationAction } from "@/lib/actions/messages";
 import { updateApplicationStatusAction } from "@/lib/actions/applications";
@@ -23,6 +23,9 @@ export default async function RequestDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const profile = await requireVerifiedStudent(`/requests/${id}`);
+  const verified = isVerificationActive(profile) || profile.is_admin;
+
   if (!hasSupabaseEnv()) {
     return (
       <PublicShell>
@@ -34,8 +37,6 @@ export default async function RequestDetailPage({
   }
 
   const supabase = await createClient();
-  const profile = await getCurrentProfile();
-  const verified = profile ? isVerificationActive(profile) : false;
 
   const { data: request } = await supabase
     .from("requests")

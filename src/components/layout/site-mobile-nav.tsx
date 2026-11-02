@@ -12,11 +12,17 @@ import {
 } from "@/components/ui/sheet";
 
 type SiteMobileNavProps = {
-  user?: { id: string; displayName: string; isAdmin?: boolean } | null;
+  user?: {
+    id: string;
+    displayName: string;
+    isAdmin?: boolean;
+    verified?: boolean;
+  } | null;
   links: { href: string; label: string }[];
+  verified?: boolean;
 };
 
-export function SiteMobileNav({ user, links }: SiteMobileNavProps) {
+export function SiteMobileNav({ user, links, verified = false }: SiteMobileNavProps) {
   return (
     <Sheet>
       <SheetTrigger
@@ -38,7 +44,7 @@ export function SiteMobileNav({ user, links }: SiteMobileNavProps) {
         <nav className="mt-6 flex flex-col gap-3">
           {links.map((item) => (
             <Link
-              key={item.href}
+              key={`${item.href}-${item.label}`}
               href={item.href}
               className="rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
             >
@@ -47,26 +53,26 @@ export function SiteMobileNav({ user, links }: SiteMobileNavProps) {
           ))}
           <div className="my-2 h-px bg-border" />
           {user ? (
-            <>
-              <Link href="/dashboard" className="rounded-lg px-3 py-2 text-sm font-medium">
-                Dashboard
-              </Link>
-              <Link href="/messages" className="rounded-lg px-3 py-2 text-sm font-medium">
-                Messages
-              </Link>
-              <Link href="/requests/new" className="rounded-lg px-3 py-2 text-sm font-medium">
-                Post a Request
-              </Link>
-              {user.isAdmin ? (
-                <Link href="/admin" className="rounded-lg px-3 py-2 text-sm font-medium">
-                  Admin
+            verified ? (
+              <>
+                {user.isAdmin ? (
+                  <Link href="/admin" className="rounded-lg px-3 py-2 text-sm font-medium">
+                    Admin
+                  </Link>
+                ) : null}
+                <Link href="/settings" className="rounded-lg px-3 py-2 text-sm font-medium">
+                  Profile
                 </Link>
-              ) : null}
-            </>
+              </>
+            ) : (
+              <Link href="/verify-student" className="rounded-lg px-3 py-2 text-sm font-medium">
+                Verify student status
+              </Link>
+            )
           ) : (
             <>
               <Link href="/login" className="rounded-lg px-3 py-2 text-sm font-medium">
-                Login
+                Log In
               </Link>
               <Link href="/signup" className="rounded-lg px-3 py-2 text-sm font-medium">
                 Sign Up

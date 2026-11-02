@@ -6,7 +6,16 @@ import { getUniversities } from "@/lib/data";
 
 export const metadata = { title: "Sign Up" };
 
-export default async function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const params = await searchParams;
+  const next =
+    params.next && params.next.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : "/dashboard";
   const universities = await getUniversities();
 
   return (
@@ -16,14 +25,21 @@ export default async function SignupPage() {
           <CardHeader>
             <CardTitle className="text-2xl">Join StudentPro</CardTitle>
             <CardDescription>
-              Create your account, then verify your student status to publish and message.
+              Create your account, then verify your student status to access the private
+              marketplace.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <SignupForm universities={universities.map((u) => ({ id: u.id, name: u.name }))} />
+            <SignupForm
+              universities={universities.map((u) => ({ id: u.id, name: u.name }))}
+              nextPath={next}
+            />
             <p className="text-center text-sm text-slate-600">
               Already have an account?{" "}
-              <Link href="/login" className="font-medium text-[#2563EB]">
+              <Link
+                href={`/login?next=${encodeURIComponent(next)}`}
+                className="font-medium text-[#2563EB]"
+              >
                 Log in
               </Link>
             </p>

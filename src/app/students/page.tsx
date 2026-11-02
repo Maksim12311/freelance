@@ -3,6 +3,7 @@ import { StudentCard } from "@/components/shared/student-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { requireVerifiedStudent } from "@/lib/auth";
 import { getUniversities, hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,6 +14,7 @@ export default async function StudentsPage({
 }: {
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
+  await requireVerifiedStudent("/students");
   const params = await searchParams;
   const universities = await getUniversities();
   let students: Array<Record<string, unknown>> = [];

@@ -33,14 +33,17 @@ function FormSuccess({ state }: { state: ActionResult | null }) {
 
 export function SignupForm({
   universities,
+  nextPath,
 }: {
   universities: { id: string; name: string }[];
+  nextPath?: string;
 }) {
   const [state, action, pending] = useActionState(signupAction, null);
 
   return (
     <form action={action} className="space-y-4">
       <FormError state={state} />
+      <input type="hidden" name="next" value={nextPath || "/dashboard"} />
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="firstName">First name</Label>
