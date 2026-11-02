@@ -20,29 +20,28 @@ export function SiteHeader({ user, tone = "light" }: SiteHeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 backdrop-blur-xl",
+        "z-40 backdrop-blur-xl",
         hero
-          ? "absolute inset-x-0 border-b border-white/10 bg-slate-950/20 text-white"
-          : "border-b border-slate-200/80 bg-white/80 text-slate-900",
+          ? "absolute inset-x-0 top-0 border-b border-[#0b1220]/08 bg-[#f7fbff]/55"
+          : "sticky top-0 border-b border-[#d7e3ef] bg-[#f7fbff]/85",
       )}
     >
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-8">
           <Link href="/" className="group flex items-center gap-2.5">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2563EB] font-heading text-sm font-bold text-white transition duration-300 group-hover:scale-105">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2563EB] font-heading text-sm font-bold text-white transition duration-300 group-hover:rotate-6">
               S
             </span>
-            <span className="font-heading text-lg font-semibold tracking-tight">StudentPro</span>
+            <span className="font-heading text-lg font-semibold tracking-tight text-[#0b1220]">
+              StudentPro
+            </span>
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
             {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "text-sm font-medium transition",
-                  hero ? "text-white/75 hover:text-white" : "text-slate-600 hover:text-slate-950",
-                )}
+                className="text-sm font-medium text-[#5b6b7c] transition hover:text-[#0b1220]"
               >
                 {item.label}
               </Link>
@@ -54,52 +53,23 @@ export function SiteHeader({ user, tone = "light" }: SiteHeaderProps) {
           {user ? (
             <>
               {user.isAdmin ? (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(hero && "text-white hover:bg-white/10 hover:text-white")}
-                  render={<Link href="/admin" />}
-                >
+                <Button variant="ghost" size="sm" render={<Link href="/admin" />}>
                   Admin
                 </Button>
               ) : null}
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(hero && "text-white hover:bg-white/10 hover:text-white")}
-                render={<Link href="/dashboard" />}
-              >
+              <Button variant="ghost" size="sm" render={<Link href="/dashboard" />}>
                 Dashboard
               </Button>
-              <Button
-                size="sm"
-                className={cn(
-                  "rounded-2xl",
-                  hero && "bg-white text-slate-950 hover:bg-blue-50",
-                )}
-                render={<Link href="/requests/new" />}
-              >
+              <Button size="sm" className="rounded-xl" render={<Link href="/requests/new" />}>
                 Post a Request
               </Button>
             </>
           ) : (
             <>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(hero && "text-white hover:bg-white/10 hover:text-white")}
-                render={<Link href="/login" />}
-              >
+              <Button variant="ghost" size="sm" render={<Link href="/login" />}>
                 Login
               </Button>
-              <Button
-                size="sm"
-                className={cn(
-                  "rounded-2xl",
-                  hero ? "bg-white text-slate-950 hover:bg-blue-50" : undefined,
-                )}
-                render={<Link href="/signup" />}
-              >
+              <Button size="sm" className="rounded-xl" render={<Link href="/signup" />}>
                 Sign Up
               </Button>
             </>

@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Outfit, Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
+import { Figtree, Sora, Geist_Mono } from "next/font/google";
 import { AppProviders } from "@/components/providers/app-providers";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+const figtree = Figtree({
   variable: "--font-sans",
   subsets: ["latin"],
 });
 
-const outfit = Outfit({
+const sora = Sora({
   variable: "--font-heading",
   subsets: ["latin"],
 });
@@ -32,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${jakarta.variable} ${outfit.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${figtree.variable} ${sora.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <AppProviders>{children}</AppProviders>

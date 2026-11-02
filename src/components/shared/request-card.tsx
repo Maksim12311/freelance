@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { MapPin, Euro, Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { formatBudget, formatRelativeDate, truncate } from "@/lib/utils";
 
@@ -24,26 +23,24 @@ export function RequestCard({ request }: { request: RequestCardData }) {
   return (
     <Link
       href={`/requests/${request.id}`}
-      className="group flex h-full flex-col rounded-[1.5rem] border border-slate-200/90 bg-white p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_24px_48px_-32px_rgba(37,99,235,0.45)]"
+      className="group flex h-full flex-col rounded-2xl border border-[#d7e3ef] bg-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#2563EB]/35 hover:bg-[#f7fbff]"
     >
-      <div className="mb-3 flex flex-wrap items-center gap-2">
+      <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
         {request.category ? (
-          <Badge variant="secondary" className="rounded-md bg-blue-50 text-[#1d4ed8]">
+          <span className="font-medium tracking-wide text-[#2563EB] uppercase">
             {request.category.name}
-          </Badge>
+          </span>
         ) : null}
-        <Badge variant="outline" className="rounded-md capitalize">
-          {request.status.replace("_", " ")}
-        </Badge>
+        <span className="text-[#5b6b7c] capitalize">{request.status.replace("_", " ")}</span>
         {request.owner?.verification_status === "verified" ? <VerifiedBadge compact /> : null}
       </div>
-      <h3 className="font-heading text-lg font-semibold leading-snug text-slate-900 transition group-hover:text-[#2563EB]">
+      <h3 className="font-heading text-lg font-semibold leading-snug text-[#0b1220] transition group-hover:text-[#2563EB]">
         {request.title}
       </h3>
-      <p className="mt-3 flex-1 text-sm leading-relaxed text-slate-600">
+      <p className="mt-3 flex-1 text-sm leading-relaxed text-[#5b6b7c]">
         {truncate(request.description, 140)}
       </p>
-      <div className="mt-5 flex flex-wrap gap-3 border-t border-slate-100 pt-4 text-xs text-slate-500">
+      <div className="mt-5 flex flex-wrap gap-3 border-t border-[#eef5fb] pt-4 text-xs text-[#5b6b7c]">
         <span className="inline-flex items-center gap-1">
           <Euro className="h-3.5 w-3.5" />
           {request.suggested_budget_eur != null

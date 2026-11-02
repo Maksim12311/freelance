@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight,
+  ArrowUpRight,
   Camera,
   Film,
   Palette,
@@ -55,52 +55,49 @@ export default async function HomePage() {
 
   return (
     <PublicShell tone="hero">
-      <section className="relative isolate min-h-[min(92vh,880px)] overflow-hidden">
+      <section className="relative isolate min-h-[min(92vh,900px)] overflow-hidden">
         <Image
           src="/hero.jpg"
-          alt="Students collaborating outdoors near a European campus"
+          alt="Bright student workspace with Vienna rooftops outside the window"
           fill
           priority
-          className="animate-drift object-cover"
+          className="animate-pan object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.78)_0%,rgba(2,6,23,0.52)_48%,rgba(2,6,23,0.28)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(37,99,235,0.28),transparent_42%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(247,251,255,0.96)_0%,rgba(247,251,255,0.82)_38%,rgba(247,251,255,0.28)_68%,rgba(247,251,255,0.08)_100%)]" />
+        <div className="absolute inset-y-0 left-0 w-full max-w-3xl bg-[radial-gradient(circle_at_left,rgba(20,184,166,0.12),transparent_55%)]" />
 
-        <div className="relative mx-auto flex min-h-[min(92vh,880px)] w-full max-w-6xl flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20 lg:justify-center lg:pb-24">
-          <div className="max-w-2xl space-y-7 text-white">
-            <p className="animate-rise font-heading text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+        <div className="relative mx-auto flex min-h-[min(92vh,900px)] w-full max-w-6xl flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20 lg:justify-center lg:pb-24">
+          <div className="max-w-xl space-y-6 text-[#0b1220]">
+            <p className="animate-in-up font-heading text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
               StudentPro
             </p>
             <h1
-              className="animate-rise font-heading text-3xl font-medium leading-[1.08] text-balance text-white/95 sm:text-4xl lg:text-5xl"
-              style={{ animationDelay: "90ms" }}
+              className="animate-in-up font-heading text-3xl font-medium leading-[1.05] text-balance sm:text-4xl lg:text-[2.75rem]"
+              style={{ animationDelay: "80ms" }}
             >
               Your Skills. Your Community. Your Opportunities.
             </h1>
             <p
-              className="animate-rise max-w-xl text-base leading-relaxed text-white/78 sm:text-lg"
-              style={{ animationDelay: "160ms" }}
+              className="animate-in-up max-w-md text-base leading-relaxed text-[#5b6b7c] sm:text-lg"
+              style={{ animationDelay: "140ms" }}
             >
-              Students Helping Students across Vienna — connect directly, arrange details
-              independently.
+              Students Helping Students in Vienna — connect directly and arrange every detail on
+              your own.
             </p>
-            <div
-              className="animate-rise flex flex-wrap gap-3 pt-1"
-              style={{ animationDelay: "230ms" }}
-            >
+            <div className="animate-in-up flex flex-wrap gap-3 pt-1" style={{ animationDelay: "200ms" }}>
               <Button
                 size="lg"
-                className="h-11 rounded-2xl bg-white px-6 text-slate-950 hover:bg-blue-50"
+                className="h-11 rounded-xl px-5"
                 render={<Link href="/requests" />}
               >
                 Find Requests
-                <ArrowRight className="h-4 w-4" />
+                <ArrowUpRight className="h-4 w-4" />
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="h-11 rounded-2xl border-white/35 bg-white/10 px-6 text-white backdrop-blur hover:bg-white/18 hover:text-white"
+                className="h-11 rounded-xl border-[#0b1220]/15 bg-white/70 px-5 backdrop-blur"
                 render={<Link href="/requests/new" />}
               >
                 Post a Request
@@ -110,94 +107,104 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="relative border-b border-slate-200/80 bg-white/80 py-10 backdrop-blur">
+      <section className="border-y border-[#d7e3ef] bg-white/70 py-8 backdrop-blur">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <form
-            action="/requests"
-            className="flex flex-col gap-3 rounded-[1.6rem] border border-slate-200 bg-slate-50/90 p-3 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.45)] sm:flex-row sm:items-center"
-          >
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <form action="/requests" className="grid gap-3 md:grid-cols-[1fr_auto]">
+            <div className="relative">
+              <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-[#5b6b7c]" />
               <Input
                 name="q"
                 placeholder="What do you need help with?"
-                className="h-12 rounded-2xl border-transparent bg-white pl-11 shadow-none"
+                className="h-12 rounded-xl border-[#d7e3ef] bg-[#f7fbff] pl-11"
               />
             </div>
-            <Button type="submit" className="h-12 rounded-2xl px-6">
-              Search requests
+            <Button type="submit" className="h-12 rounded-xl px-6">
+              Search
             </Button>
           </form>
         </div>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-        <div className="mb-8 max-w-2xl">
-          <h2 className="font-heading text-3xl font-semibold tracking-tight">Popular categories</h2>
-          <p className="mt-2 text-slate-600">
-            Browse the ways Vienna students help each other every week.
-          </p>
+        <div className="mb-8 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.2em] text-[#2563EB] uppercase">
+              Categories
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight">
+              What students help with
+            </h2>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {popular.map((category, index) => {
+        <div className="flex gap-3 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {popular.map((category) => {
             const Icon = categoryIcons[category.slug] ?? HandHelping;
             return (
               <Link
                 key={category.slug}
                 href={`/requests?category=${category.slug}`}
-                className="group rounded-[1.4rem] border border-slate-200/90 bg-white/90 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-blue-50/40"
-                style={{ transitionDelay: `${index * 20}ms` }}
+                className="group flex min-w-[10.5rem] shrink-0 items-center gap-3 rounded-xl border border-[#d7e3ef] bg-white px-4 py-3 transition hover:border-[#2563EB]/40 hover:bg-[#e8f3ff]"
               >
-                <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB] transition group-hover:scale-110">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <p className="font-heading text-base font-medium text-slate-900">{category.name}</p>
+                <Icon className="h-4 w-4 text-[#2563EB] transition group-hover:translate-x-0.5" />
+                <span className="text-sm font-medium text-[#0b1220]">{category.name}</span>
               </Link>
             );
           })}
         </div>
       </section>
 
-      <section className="surface-grid border-y border-slate-200/70 bg-[#f8fafc] py-16">
+      <section className="border-y border-[#d7e3ef] bg-[#eef8f7] py-16">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <div className="mb-10 max-w-2xl">
-            <h2 className="font-heading text-3xl font-semibold tracking-tight">
+          <div className="mb-10 max-w-xl">
+            <p className="text-xs font-semibold tracking-[0.2em] text-teal-700 uppercase">
+              Process
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight">
               How StudentPro Works
             </h2>
-            <p className="mt-2 text-slate-600">
-              From verified student status to an independent collaboration — four clear steps.
+            <p className="mt-2 text-[#5b6b7c]">
+              Four steps from student verification to an independent collaboration.
             </p>
           </div>
-          <div className="grid gap-5 md:grid-cols-4">
+          <ol className="grid gap-0 md:grid-cols-4">
             {[
               "Verify your student status.",
               "Discover requests or offer your skills.",
               "Connect directly with another student.",
               "Agree on the details independently.",
             ].map((step, index) => (
-              <div key={step} className="relative pt-2">
-                <div className="mb-5 font-heading text-5xl font-semibold tracking-tight text-[#2563EB]/15">
-                  0{index + 1}
+              <li
+                key={step}
+                className="border-[#cfe3e1] py-4 md:border-l md:px-5 md:first:border-l-0 md:first:pl-0"
+              >
+                <div className="font-heading text-sm font-semibold tracking-[0.18em] text-teal-700">
+                  STEP {index + 1}
                 </div>
-                <p className="text-base font-medium leading-relaxed text-slate-800">{step}</p>
-              </div>
+                <p className="mt-3 text-base font-medium leading-relaxed text-[#0b1220]">{step}</p>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="font-heading text-3xl font-semibold tracking-tight">Recent requests</h2>
-            <p className="mt-2 text-slate-600">
+            <p className="text-xs font-semibold tracking-[0.2em] text-[#2563EB] uppercase">
+              Marketplace
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight">
+              Recent requests
+            </h2>
+            <p className="mt-2 text-[#5b6b7c]">
               {configured
                 ? "Open requests from verified students."
-                : "Connect Supabase to load live requests. Empty state is intentional — not demo users."}
+                : "Connect Supabase to load live requests."}
             </p>
           </div>
-          <Button variant="outline" className="rounded-2xl" render={<Link href="/requests" />}>
+          <Button variant="outline" className="rounded-xl" render={<Link href="/requests" />}>
             View all
+            <ArrowUpRight className="h-4 w-4" />
           </Button>
         </div>
         {recentRequests.length ? (
@@ -216,27 +223,29 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="rounded-[1.8rem] border border-dashed border-slate-300 bg-slate-50/80 px-6 py-16 text-center">
-            <p className="font-heading text-xl font-medium text-slate-900">No open requests yet</p>
-            <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">
-              Be the first to publish what you need help with.
+          <div className="hairline rounded-2xl bg-white px-6 py-16 text-center">
+            <p className="font-heading text-xl font-semibold">No open requests yet</p>
+            <p className="mx-auto mt-2 max-w-md text-sm text-[#5b6b7c]">
+              Publish the first request and start connecting with verified students.
             </p>
-            <Button className="mt-6 rounded-2xl" render={<Link href="/requests/new" />}>
+            <Button className="mt-6 rounded-xl" render={<Link href="/requests/new" />}>
               Post a Request
             </Button>
           </div>
         )}
       </section>
 
-      <section className="bg-[linear-gradient(180deg,#eff6ff_0%,#f8fafc_55%,#ffffff_100%)] py-16">
+      <section className="bg-[linear-gradient(180deg,#e8f3ff_0%,#f7fbff_55%,transparent_100%)] py-16">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <div className="mb-8 max-w-2xl">
-            <h2 className="font-heading text-3xl font-semibold tracking-tight">
+          <div className="mb-8 max-w-xl">
+            <p className="text-xs font-semibold tracking-[0.2em] text-[#2563EB] uppercase">
+              People
+            </p>
+            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight">
               Featured verified students
             </h2>
-            <p className="mt-2 text-slate-600">
-              Profiles appear only after verification. Ratings are peer feedback, not professional
-              certification.
+            <p className="mt-2 text-[#5b6b7c]">
+              Profiles appear only after verification. Ratings are peer feedback, not certification.
             </p>
           </div>
           {featuredStudents.length ? (
@@ -254,7 +263,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-[1.8rem] border border-slate-200/80 bg-white/70 px-6 py-14 text-center text-sm text-slate-600 backdrop-blur">
+            <div className="hairline rounded-2xl bg-white/80 px-6 py-14 text-center text-sm text-[#5b6b7c]">
               Verified student profiles will appear here once Supabase is connected.
             </div>
           )}
@@ -262,14 +271,14 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl space-y-8 px-4 py-16 sm:px-6">
-        <div className="max-w-2xl">
-          <h2 className="font-heading text-3xl font-semibold tracking-tight">Trust & safety</h2>
-          <p className="mt-2 text-slate-600">
-            Built as a connecting platform — with clear limits and moderation tools.
-          </p>
+        <div className="max-w-xl">
+          <p className="text-xs font-semibold tracking-[0.2em] text-teal-700 uppercase">Trust</p>
+          <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight">
+            Built for clear boundaries
+          </h2>
         </div>
         <PlatformNotice />
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3">
           {[
             {
               title: "Student verification",
@@ -287,13 +296,10 @@ export default async function HomePage() {
               icon: MessageCircle,
             },
           ].map((item) => (
-            <div
-              key={item.title}
-              className="rounded-[1.5rem] border border-slate-200 bg-white p-6 transition hover:border-blue-200"
-            >
+            <div key={item.title} className="border-t border-[#0b1220]/15 pt-5">
               <item.icon className="mb-4 h-5 w-5 text-[#2563EB]" />
-              <h3 className="font-heading text-lg font-semibold text-slate-900">{item.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.body}</p>
+              <h3 className="font-heading text-lg font-semibold">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#5b6b7c]">{item.body}</p>
             </div>
           ))}
         </div>
