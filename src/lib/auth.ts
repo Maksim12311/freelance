@@ -1,37 +1,52 @@
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
+import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
 
 export async function getCurrentUser(): Promise<User | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
+  if (!hasSupabaseEnv()) return null;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user;
+  } catch {
+    return null;
+  }
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (!hasSupabaseEnv()) return null;
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) return null;
+    if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  return profile;
+    return profile;
+  } catch {
+    return null;
+  }
 }
 
 export async function requireUser(
   redirectTo = "/login",
 ): Promise<{ user: User; profile: Profile | null }> {
+  if (!hasSupabaseEnv()) {
+    redirect(redirectTo);
+  }
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -51,17 +66,22 @@ export async function requireUser(
 }
 
 /** Require an authenticated user with a loaded profile row. */
-export async function requireProfile(
-  redirectTo = "/login",
-): Promise<Profile> {
-  const { profile } = await requireUser(redirectTo);
+export async function requireProfile(redirectTo = "/login"): Promise<Profile> {
+  const next =
+    redirectTo.startsWith("/") && !redirectTo.startsWith("/login")
+      ? `/login?next=${encodeURIComponent(redirectTo)}`
+      : redirectTo;
+  const { profile } = await requireUser(next);
   if (!profile) {
-    redirect(redirectTo);
+    redirect(next);
+  }
+  if (profile.is_suspended) {
+    redirect("/login?error=suspended");
   }
   return profile;
 }
 
-function isVerificationActive(profile: Profile): boolean {
+export function isVerificationActive(profile: Profile): boolean {
   if (profile.verification_status !== "verified") return false;
   if (profile.is_suspended) return false;
   if (!profile.verification_expires_at) return true;
@@ -71,7 +91,7 @@ function isVerificationActive(profile: Profile): boolean {
 export async function requireVerifiedStudent(
   redirectTo = "/verify-student",
 ): Promise<Profile> {
-  const profile = await requireProfile();
+  const profile = await requireProfile(redirectTo);
 
   if (!isVerificationActive(profile)) {
     redirect(redirectTo);
@@ -80,8 +100,8 @@ export async function requireVerifiedStudent(
   return profile;
 }
 
-export async function requireAdmin(redirectTo = "/"): Promise<Profile> {
-  const profile = await requireProfile();
+export async function requireAdmin(redirectTo = "/dashboard"): Promise<Profile> {
+  const profile = await requireProfile("/admin");
 
   if (!profile.is_admin || profile.is_suspended) {
     redirect(redirectTo);

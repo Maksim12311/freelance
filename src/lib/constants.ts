@@ -58,6 +58,12 @@ export const WORK_ELIGIBILITY_STATUS_LABELS: Record<
   restricted: "Restricted",
 };
 
+/** Alias used by dashboard UI. */
+export const WORK_ELIGIBILITY_LABELS = WORK_ELIGIBILITY_STATUS_LABELS;
+
+export const LEGAL_DRAFT_BANNER =
+  "Draft for legal review — not final Terms. This content is a working draft and must be reviewed by a qualified Austrian legal professional before public launch.";
+
 export const WORK_MODE_LABELS: Record<WorkMode, string> = {
   remote: "Remote",
   in_person: "In person",
