@@ -1,6 +1,6 @@
 # StudentPro
 
-**Students Helping Students.** A Vienna student marketplace that connects university students for help with tutoring, design, moving, technology, and everyday tasks.
+**Students Helping Students.** A **private** Vienna marketplace for **verified university students** — tutoring, design, moving, technology, and everyday help. Guests can view marketing pages only; requests, profiles, messaging, and posting require login + student verification.
 
 StudentPro is a digital intermediary only. It does **not** employ students, provide services itself, process payments for services, hold customer money, set mandatory prices, guarantee quality, or automatically assign workers.
 
