@@ -15,31 +15,20 @@ import { declineInvitationAction } from "@/lib/actions/invitations";
 import { getRecommendedRequestsForSpecialist } from "@/lib/matching-data";
 import { getPricingSetting, formatEur } from "@/lib/pricing";
 import { hasActiveBoost, hasActivePlus, countApplicationCredits } from "@/lib/payments";
-import { isDemoMode, setDemoActiveMode } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 import { formatBudget, formatRelativeDate } from "@/lib/utils";
 import { PortfolioAddForm, SpecialistProfileForm } from "@/components/forms/specialist-forms";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "Specialist mode" };
 
 export default async function SpecialistDashboardPage() {
-  let profile = await requireVerifiedStudent("/dashboard/specialist");
+  const profile = await requireVerifiedStudent("/dashboard/specialist");
   const supabase = await createClient();
 
+  // Mode changes only via switchModeAction (cookie/DB writes are not allowed during render).
   if (profile.active_mode !== "specialist") {
-    if (isDemoMode()) {
-      await setDemoActiveMode("specialist");
-    } else {
-      await supabase
-        .from("profiles")
-        .update({ is_specialist_enabled: true, active_mode: "specialist" })
-        .eq("id", profile.id);
-    }
-    profile = {
-      ...profile,
-      is_specialist_enabled: true,
-      active_mode: "specialist",
-    };
+    redirect("/dashboard");
   }
 
   const [
