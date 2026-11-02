@@ -75,7 +75,7 @@ export function SiteMobileNav({ user, links, verified = false }: SiteMobileNavPr
                 Log In
               </Link>
               <Link href="/signup" className="rounded-lg px-3 py-2 text-sm font-medium">
-                Sign Up
+                Join Now
               </Link>
             </>
           )}

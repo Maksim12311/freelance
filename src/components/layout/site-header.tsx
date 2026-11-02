@@ -71,7 +71,7 @@ export function SiteHeader({ user }: SiteHeaderProps) {
                 className="rounded-xl bg-[#e11d48] hover:bg-rose-700"
                 render={<Link href="/signup" />}
               >
-                Sign Up
+                Join Now
               </Button>
             </>
           )}
