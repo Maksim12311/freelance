@@ -21,7 +21,7 @@ export default async function SignupPage({
   const demo = isDemoMode();
 
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto flex w-full max-w-lg flex-col px-4 py-12 sm:px-6">
         <Card className="border-[#f0d5db] shadow-sm">
           <CardHeader>

@@ -14,7 +14,7 @@ export const metadata = { title: "Privacy Policy" };
 
 export default function Page() {
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-10 sm:px-6">
         <h1 className="text-3xl font-semibold tracking-tight">Privacy Policy</h1>
         <DraftBanner />

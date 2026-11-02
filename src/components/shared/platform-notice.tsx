@@ -15,7 +15,7 @@ export function PlatformNotice({
         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#e11d48]/80" />
         <span>
           {children ??
-            "StudentPro only connects verified students. You arrange details yourselves — we don’t process service payments or guarantee outcomes."}
+            `${title}. You arrange details yourselves — we don’t process service payments or guarantee outcomes.`}
         </span>
       </p>
     );

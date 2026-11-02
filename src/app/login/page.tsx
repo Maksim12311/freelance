@@ -15,7 +15,7 @@ export default async function LoginPage({
   const demo = isDemoMode();
 
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto flex w-full max-w-md flex-col px-4 py-12 sm:px-6">
         <Card className="border-slate-200 shadow-sm">
           <CardHeader>

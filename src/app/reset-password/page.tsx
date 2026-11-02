@@ -6,7 +6,7 @@ export const metadata = { title: "Reset Password" };
 
 export default function ResetPasswordPage() {
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto w-full max-w-md px-4 py-12 sm:px-6">
         <Card>
           <CardHeader>
