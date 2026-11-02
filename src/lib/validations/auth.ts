@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const optionalUniversityId = z
-  .union([z.uuid(), z.literal("")])
+  .union([z.uuid("Select a university"), z.literal("")])
   .optional()
   .transform((value) => (value ? value : undefined));
 
