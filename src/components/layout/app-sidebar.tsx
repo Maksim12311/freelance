@@ -10,7 +10,6 @@ import {
   Send,
   MessageSquare,
   Users,
-  Briefcase,
   BarChart3,
   UserRound,
   Shield,
@@ -38,7 +37,7 @@ const customerNav: NavItem[] = [
 ];
 
 const specialistNav: NavItem[] = [
-  { href: "/dashboard/specialist", label: "Specialist hub", icon: Briefcase, match: "exact" },
+  { href: "/dashboard/specialist", label: "Home", icon: LayoutDashboard, match: "exact" },
   { href: "/requests", label: "Browse jobs", icon: Search },
   { href: "/dashboard/applications", label: "My applications", icon: Send },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
@@ -186,7 +185,7 @@ export function AppMobileTabs({ activeMode = "customer" }: { activeMode?: Mode }
   const tabs =
     activeMode === "specialist"
       ? [
-          { href: "/dashboard/specialist", label: "Hub", icon: Briefcase },
+          { href: "/dashboard/specialist", label: "Home", icon: LayoutDashboard },
           { href: "/requests", label: "Jobs", icon: Search },
           { href: "/dashboard/applications", label: "Apps", icon: Send },
           { href: "/messages", label: "Chat", icon: MessageSquare },
