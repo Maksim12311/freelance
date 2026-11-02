@@ -62,6 +62,29 @@ export type NotificationType =
 
 export type VerificationMethod = "university_email" | "enrollment_certificate";
 
+export type ActiveMode = "customer" | "specialist";
+
+export type InvitationStatus = "sent" | "viewed" | "applied" | "declined" | "expired";
+
+export type PaymentStatus =
+  | "pending"
+  | "requires_action"
+  | "succeeded"
+  | "failed"
+  | "refunded"
+  | "cancelled";
+
+export type PaymentProvider = "stripe" | "manual" | "credit";
+
+export type BoostStatus = "pending" | "active" | "expired" | "cancelled";
+
+export type SubscriptionStatus =
+  | "trialing"
+  | "active"
+  | "past_due"
+  | "cancelled"
+  | "expired";
+
 export interface Database {
   public: {
     Tables: {
@@ -158,6 +181,14 @@ export interface Database {
           privacy_show_university: boolean;
           completed_collaborations_count: number;
           average_rating: number | null;
+          active_mode: ActiveMode;
+          is_specialist_enabled: boolean;
+          specialist_headline: string | null;
+          specialist_bio: string | null;
+          preferred_budget_min_eur: number | null;
+          preferred_budget_max_eur: number | null;
+          remote_available: boolean;
+          accepts_invitations: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -188,6 +219,14 @@ export interface Database {
           privacy_show_university?: boolean;
           completed_collaborations_count?: number;
           average_rating?: number | null;
+          active_mode?: ActiveMode;
+          is_specialist_enabled?: boolean;
+          specialist_headline?: string | null;
+          specialist_bio?: string | null;
+          preferred_budget_min_eur?: number | null;
+          preferred_budget_max_eur?: number | null;
+          remote_available?: boolean;
+          accepts_invitations?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -218,6 +257,14 @@ export interface Database {
           privacy_show_university?: boolean;
           completed_collaborations_count?: number;
           average_rating?: number | null;
+          active_mode?: ActiveMode;
+          is_specialist_enabled?: boolean;
+          specialist_headline?: string | null;
+          specialist_bio?: string | null;
+          preferred_budget_min_eur?: number | null;
+          preferred_budget_max_eur?: number | null;
+          remote_available?: boolean;
+          accepts_invitations?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -540,6 +587,12 @@ export interface Database {
           proposed_price_eur: number | null;
           availability: string | null;
           status: ApplicationStatus;
+          invitation_id: string | null;
+          payment_id: string | null;
+          credit_id: string | null;
+          fee_eur: number | null;
+          messaging_unlocked: boolean;
+          unlocked_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -552,6 +605,12 @@ export interface Database {
           proposed_price_eur?: number | null;
           availability?: string | null;
           status?: ApplicationStatus;
+          invitation_id?: string | null;
+          payment_id?: string | null;
+          credit_id?: string | null;
+          fee_eur?: number | null;
+          messaging_unlocked?: boolean;
+          unlocked_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -564,6 +623,12 @@ export interface Database {
           proposed_price_eur?: number | null;
           availability?: string | null;
           status?: ApplicationStatus;
+          invitation_id?: string | null;
+          payment_id?: string | null;
+          credit_id?: string | null;
+          fee_eur?: number | null;
+          messaging_unlocked?: boolean;
+          unlocked_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -1050,6 +1115,377 @@ export interface Database {
           },
         ];
       };
+      portfolio_items: {
+        Row: {
+          id: string;
+          profile_id: string;
+          title: string;
+          description: string | null;
+          image_url: string | null;
+          link_url: string | null;
+          sort_order: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          title: string;
+          description?: string | null;
+          image_url?: string | null;
+          link_url?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          title?: string;
+          description?: string | null;
+          image_url?: string | null;
+          link_url?: string | null;
+          sort_order?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_items_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      specialist_invitations: {
+        Row: {
+          id: string;
+          request_id: string;
+          customer_id: string;
+          specialist_id: string;
+          message: string | null;
+          status: InvitationStatus;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          request_id: string;
+          customer_id: string;
+          specialist_id: string;
+          message?: string | null;
+          status?: InvitationStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          request_id?: string;
+          customer_id?: string;
+          specialist_id?: string;
+          message?: string | null;
+          status?: InvitationStatus;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      pricing_settings: {
+        Row: {
+          key: string;
+          amount_eur: number;
+          currency: string;
+          description: string | null;
+          is_enabled: boolean;
+          metadata: Json;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          amount_eur: number;
+          currency?: string;
+          description?: string | null;
+          is_enabled?: boolean;
+          metadata?: Json;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          amount_eur?: number;
+          currency?: string;
+          description?: string | null;
+          is_enabled?: boolean;
+          metadata?: Json;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      profile_boosts: {
+        Row: {
+          id: string;
+          profile_id: string;
+          starts_at: string;
+          ends_at: string;
+          amount_eur: number;
+          payment_provider: PaymentProvider;
+          payment_reference: string | null;
+          status: BoostStatus;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          starts_at?: string;
+          ends_at: string;
+          amount_eur: number;
+          payment_provider?: PaymentProvider;
+          payment_reference?: string | null;
+          status?: BoostStatus;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          starts_at?: string;
+          ends_at?: string;
+          amount_eur?: number;
+          payment_provider?: PaymentProvider;
+          payment_reference?: string | null;
+          status?: BoostStatus;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      subscription_plans: {
+        Row: {
+          id: string;
+          code: string;
+          name: string;
+          description: string | null;
+          amount_eur: number;
+          interval: "month" | "year";
+          features: Json;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          code: string;
+          name: string;
+          description?: string | null;
+          amount_eur: number;
+          interval?: "month" | "year";
+          features?: Json;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          code?: string;
+          name?: string;
+          description?: string | null;
+          amount_eur?: number;
+          interval?: "month" | "year";
+          features?: Json;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      user_subscriptions: {
+        Row: {
+          id: string;
+          profile_id: string;
+          plan_id: string;
+          status: SubscriptionStatus;
+          current_period_start: string;
+          current_period_end: string;
+          cancel_at_period_end: boolean;
+          cancelled_at: string | null;
+          payment_provider: "stripe" | "manual";
+          payment_reference: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          plan_id: string;
+          status?: SubscriptionStatus;
+          current_period_start?: string;
+          current_period_end: string;
+          cancel_at_period_end?: boolean;
+          cancelled_at?: string | null;
+          payment_provider?: "stripe" | "manual";
+          payment_reference?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          plan_id?: string;
+          status?: SubscriptionStatus;
+          current_period_start?: string;
+          current_period_end?: string;
+          cancel_at_period_end?: boolean;
+          cancelled_at?: string | null;
+          payment_provider?: "stripe" | "manual";
+          payment_reference?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      application_payments: {
+        Row: {
+          id: string;
+          profile_id: string;
+          request_id: string;
+          application_id: string | null;
+          amount_eur: number;
+          currency: string;
+          status: PaymentStatus;
+          payment_provider: PaymentProvider;
+          provider_payment_id: string | null;
+          provider_event_id: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          request_id: string;
+          application_id?: string | null;
+          amount_eur: number;
+          currency?: string;
+          status?: PaymentStatus;
+          payment_provider?: PaymentProvider;
+          provider_payment_id?: string | null;
+          provider_event_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          request_id?: string;
+          application_id?: string | null;
+          amount_eur?: number;
+          currency?: string;
+          status?: PaymentStatus;
+          payment_provider?: PaymentProvider;
+          provider_payment_id?: string | null;
+          provider_event_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      application_credits: {
+        Row: {
+          id: string;
+          profile_id: string;
+          source: "admin" | "promo" | "refund" | "purchase";
+          remaining: number;
+          initial_amount: number;
+          expires_at: string | null;
+          note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          source?: "admin" | "promo" | "refund" | "purchase";
+          remaining: number;
+          initial_amount: number;
+          expires_at?: string | null;
+          note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          source?: "admin" | "promo" | "refund" | "purchase";
+          remaining?: number;
+          initial_amount?: number;
+          expires_at?: string | null;
+          note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      analytics_events: {
+        Row: {
+          id: string;
+          event_type: string;
+          actor_id: string | null;
+          subject_profile_id: string | null;
+          request_id: string | null;
+          application_id: string | null;
+          metadata: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          event_type: string;
+          actor_id?: string | null;
+          subject_profile_id?: string | null;
+          request_id?: string | null;
+          application_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          event_type?: string;
+          actor_id?: string | null;
+          subject_profile_id?: string | null;
+          request_id?: string | null;
+          application_id?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      specialist_match_scores: {
+        Row: {
+          id: string;
+          request_id: string;
+          specialist_id: string;
+          score: number;
+          reasons: Json;
+          is_sponsored: boolean;
+          computed_at: string;
+        };
+        Insert: {
+          id?: string;
+          request_id: string;
+          specialist_id: string;
+          score?: number;
+          reasons?: Json;
+          is_sponsored?: boolean;
+          computed_at?: string;
+        };
+        Update: {
+          id?: string;
+          request_id?: string;
+          specialist_id?: string;
+          score?: number;
+          reasons?: Json;
+          is_sponsored?: boolean;
+          computed_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -1064,6 +1500,18 @@ export interface Database {
       is_conversation_participant: {
         Args: { p_conversation_id: string };
         Returns: boolean;
+      };
+      has_active_boost: {
+        Args: { p_profile_id: string };
+        Returns: boolean;
+      };
+      has_active_plus: {
+        Args: { p_profile_id: string };
+        Returns: boolean;
+      };
+      expire_profile_boosts: {
+        Args: Record<string, never>;
+        Returns: number;
       };
       // App-level RPCs (may be added in later migrations / admin helpers).
       request_account_deletion: {
@@ -1126,3 +1574,13 @@ export type Report = Tables<"reports">;
 export type BlockedUser = Tables<"blocked_users">;
 export type Notification = Tables<"notifications">;
 export type AdminAuditLog = Tables<"admin_audit_logs">;
+export type PortfolioItem = Tables<"portfolio_items">;
+export type SpecialistInvitation = Tables<"specialist_invitations">;
+export type PricingSetting = Tables<"pricing_settings">;
+export type ProfileBoost = Tables<"profile_boosts">;
+export type SubscriptionPlan = Tables<"subscription_plans">;
+export type UserSubscription = Tables<"user_subscriptions">;
+export type ApplicationPayment = Tables<"application_payments">;
+export type ApplicationCredit = Tables<"application_credits">;
+export type AnalyticsEvent = Tables<"analytics_events">;
+export type SpecialistMatchScore = Tables<"specialist_match_scores">;

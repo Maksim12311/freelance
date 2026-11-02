@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireVerifiedStudent } from "@/lib/auth";
 import { getCategories, hasSupabaseEnv } from "@/lib/data";
+import { DEMO_REQUESTS, isDemoMode } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Find Requests" };
@@ -26,7 +27,26 @@ export default async function RequestsPage({
   let requests: Array<Record<string, unknown>> = [];
   let count = 0;
 
-  if (hasSupabaseEnv()) {
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    let rows = [...DEMO_REQUESTS];
+    if (params.q) {
+      const q = params.q.toLowerCase();
+      rows = rows.filter(
+        (r) =>
+          r.title.toLowerCase().includes(q) || r.description.toLowerCase().includes(q),
+      );
+    }
+    if (params.category) {
+      rows = rows.filter((r) => r.category?.slug === params.category);
+    }
+    if (params.location) {
+      rows = rows.filter((r) =>
+        (r.location || "").toLowerCase().includes(params.location!.toLowerCase()),
+      );
+    }
+    count = rows.length;
+    requests = rows.slice(from, to + 1) as Array<Record<string, unknown>>;
+  } else {
     const supabase = await createClient();
     let query = supabase
       .from("requests")
@@ -174,11 +194,7 @@ export default async function RequestsPage({
         ) : (
           <EmptyState
             title="No requests found"
-            description={
-              hasSupabaseEnv()
-                ? "Try adjusting filters or post the first request."
-                : "Configure Supabase credentials to load marketplace data."
-            }
+            description="Try adjusting filters or post the first request."
             action={
               <Button render={<Link href="/requests/new" />}>Post a Request</Button>
             }

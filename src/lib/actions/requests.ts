@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireVerifiedStudent, requireProfile } from "@/lib/auth";
+import { DEMO_REQUESTS, isDemoMode } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 import { requestSchema } from "@/lib/validations/request";
 import type { ActionResult } from "@/lib/actions/auth";
@@ -30,6 +31,11 @@ export async function createRequestAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
+  if (isDemoMode()) {
+    // Preview without DB — open an existing sample request suggestions page.
+    redirect(`/requests/${DEMO_REQUESTS[0].id}/suggestions`);
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("requests")
@@ -51,7 +57,7 @@ export async function createRequestAction(
     return { ok: false, error: error?.message ?? "Could not create request" };
   }
 
-  redirect(`/requests/${data.id}`);
+  redirect(`/requests/${data.id}/suggestions`);
 }
 
 export async function closeRequestAction(requestId: string): Promise<ActionResult> {

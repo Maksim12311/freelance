@@ -1,6 +1,8 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { DEMO_COOKIE, isDemoMode } from "@/lib/demo";
 import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimit } from "@/lib/rate-limit";
@@ -17,11 +19,23 @@ export type ActionResult = {
   message?: string;
 };
 
-const SUPABASE_SETUP_ERROR =
-  "Supabase is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local, then restart the dev server.";
-
 function siteUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+}
+
+async function startDemoSession() {
+  const jar = await cookies();
+  jar.set(DEMO_COOKIE, "1", {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
+}
+
+async function clearDemoSession() {
+  const jar = await cookies();
+  jar.delete(DEMO_COOKIE);
 }
 
 export async function signupAction(
@@ -53,8 +67,12 @@ export async function signupAction(
     return { ok: false, error: "Select a university" };
   }
 
-  if (!hasSupabaseEnv()) {
-    return { ok: false, error: SUPABASE_SETUP_ERROR };
+  const nextRaw = String(formData.get("next") || "/dashboard");
+  const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/dashboard";
+
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    await startDemoSession();
+    redirect(next);
   }
 
   const supabase = await createClient();
@@ -75,8 +93,6 @@ export async function signupAction(
     return { ok: false, error: error.message };
   }
 
-  const nextRaw = String(formData.get("next") || "/dashboard");
-  const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/dashboard";
   redirect(`/verify-student?next=${encodeURIComponent(next)}`);
 }
 
@@ -98,8 +114,12 @@ export async function loginAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  if (!hasSupabaseEnv()) {
-    return { ok: false, error: SUPABASE_SETUP_ERROR };
+  const nextRaw = String(formData.get("next") || "/dashboard");
+  const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/dashboard";
+
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    await startDemoSession();
+    redirect(next);
   }
 
   const supabase = await createClient();
@@ -111,9 +131,6 @@ export async function loginAction(
   if (error) {
     return { ok: false, error: error.message };
   }
-
-  const nextRaw = String(formData.get("next") || "/dashboard");
-  const next = nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/dashboard";
 
   const userId = signInData.user?.id;
   if (userId) {
@@ -140,7 +157,8 @@ export async function loginAction(
 }
 
 export async function logoutAction() {
-  if (!hasSupabaseEnv()) {
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    await clearDemoSession();
     redirect("/");
   }
   const supabase = await createClient();
@@ -164,8 +182,11 @@ export async function forgotPasswordAction(
     return { ok: false, error: `Too many attempts. Try again in ${limited.retryAfterSec}s.` };
   }
 
-  if (!hasSupabaseEnv()) {
-    return { ok: false, error: SUPABASE_SETUP_ERROR };
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    return {
+      ok: true,
+      message: "Local demo mode — password reset is skipped. Sign in with any email.",
+    };
   }
 
   const supabase = await createClient();
@@ -195,8 +216,9 @@ export async function resetPasswordAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
-  if (!hasSupabaseEnv()) {
-    return { ok: false, error: SUPABASE_SETUP_ERROR };
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    await startDemoSession();
+    redirect("/dashboard");
   }
 
   const supabase = await createClient();

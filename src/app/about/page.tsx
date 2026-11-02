@@ -8,7 +8,7 @@ export const metadata = { title: "About StudentPro" };
 
 export default function AboutPage() {
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto w-full max-w-3xl space-y-8 px-4 py-12 sm:px-6">
         <div className="space-y-3">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#2563EB]">

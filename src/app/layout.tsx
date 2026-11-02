@@ -35,8 +35,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={`${jakarta.variable} ${bricolage.variable} ${geistMono.variable} h-full antialiased`}
+      className={`light ${jakarta.variable} ${bricolage.variable} ${geistMono.variable} h-full antialiased`}
+      style={{ colorScheme: "light" }}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <AppProviders>{children}</AppProviders>

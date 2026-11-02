@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 
+import { DEMO_COOKIE, DEMO_PROFILE_ID } from "@/lib/demo";
 import { updateSession } from "@/lib/supabase/middleware";
 
 /** Routes that require a verified student (or admin). */
@@ -34,13 +35,37 @@ function isVerificationActive(profile: {
   return new Date(profile.verification_expires_at).getTime() > Date.now();
 }
 
+function isDemoMode() {
+  return !(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+}
+
 export async function proxy(request: NextRequest) {
-  const { supabaseResponse, user, supabase } = await updateSession(request);
   const { pathname, search } = request.nextUrl;
   const intended = `${pathname}${search}`;
-
   const needsMarketplace = matchesPrefix(pathname, MARKETPLACE_PREFIXES);
   const needsAuth = needsMarketplace || matchesPrefix(pathname, AUTH_ONLY_PREFIXES);
+
+  // No database: cookie session stands in for Supabase auth.
+  if (isDemoMode()) {
+    const demo = request.cookies.get(DEMO_COOKIE)?.value === "1";
+    if (!needsAuth) {
+      return NextResponse.next();
+    }
+    if (!demo) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.search = "";
+      loginUrl.searchParams.set("next", intended);
+      return NextResponse.redirect(loginUrl);
+    }
+    // Demo user is always verified admin — allow marketplace + admin.
+    void DEMO_PROFILE_ID;
+    return NextResponse.next();
+  }
+
+  const { supabaseResponse, user, supabase } = await updateSession(request);
 
   if (!needsAuth) {
     return supabaseResponse;

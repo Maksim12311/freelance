@@ -82,7 +82,7 @@ export default async function HomePage() {
       : "Complete verification";
 
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       {/* Hero */}
       <section className="relative isolate min-h-[calc(100vh-4rem)] overflow-hidden text-white">
         <Image

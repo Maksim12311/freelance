@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 
+import { getDemoProfile, isDemoMode } from "@/lib/demo";
 import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
@@ -11,6 +12,11 @@ function safeInternalPath(path: string | undefined, fallback: string) {
 }
 
 export async function getCurrentUser(): Promise<User | null> {
+  if (isDemoMode()) {
+    const profile = await getDemoProfile();
+    if (!profile) return null;
+    return { id: profile.id, email: profile.email } as User;
+  }
   if (!hasSupabaseEnv()) return null;
   try {
     const supabase = await createClient();
@@ -24,6 +30,9 @@ export async function getCurrentUser(): Promise<User | null> {
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
+  if (isDemoMode()) {
+    return getDemoProfile();
+  }
   if (!hasSupabaseEnv()) return null;
   try {
     const supabase = await createClient();
@@ -48,6 +57,15 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 export async function requireUser(
   redirectTo = "/login",
 ): Promise<{ user: User; profile: Profile | null }> {
+  if (isDemoMode()) {
+    const profile = await getDemoProfile();
+    if (!profile) redirect(redirectTo);
+    return {
+      user: { id: profile.id, email: profile.email } as User,
+      profile,
+    };
+  }
+
   if (!hasSupabaseEnv()) {
     redirect(redirectTo);
   }

@@ -30,6 +30,44 @@ export async function startConversationAction(
     return { ok: false, error: "Messaging is unavailable with this user." };
   }
 
+  // Request-scoped messaging requires an unlocked application between these parties.
+  if (requestId) {
+    const { data: request } = await supabase
+      .from("requests")
+      .select("owner_id")
+      .eq("id", requestId)
+      .maybeSingle();
+
+    if (!request) {
+      return { ok: false, error: "Request not found." };
+    }
+
+    const ownerId = request.owner_id;
+    const pairOk =
+      (profile.id === ownerId && otherProfileId !== ownerId) ||
+      (otherProfileId === ownerId && profile.id !== ownerId);
+
+    if (!pairOk) {
+      return { ok: false, error: "Request conversations are between customer and applicant only." };
+    }
+
+    const applicantId = profile.id === ownerId ? otherProfileId : profile.id;
+    const { data: unlocked } = await supabase
+      .from("applications")
+      .select("id")
+      .eq("request_id", requestId)
+      .eq("applicant_id", applicantId)
+      .eq("messaging_unlocked", true)
+      .maybeSingle();
+
+    if (!unlocked) {
+      return {
+        ok: false,
+        error: "Messaging unlocks after a successful application on this request.",
+      };
+    }
+  }
+
   const { data: existingParticipants } = await supabase
     .from("conversation_participants")
     .select("conversation_id")

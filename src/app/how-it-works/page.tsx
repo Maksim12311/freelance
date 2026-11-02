@@ -6,7 +6,7 @@ export const metadata = { title: "How it works" };
 
 export default function HowItWorksPage() {
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto w-full max-w-3xl space-y-8 px-4 py-12 sm:px-6">
         <div>
           <h1 className="font-heading text-3xl font-bold tracking-tight">How StudentPro works</h1>

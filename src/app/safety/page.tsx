@@ -7,7 +7,7 @@ export const metadata = { title: "Safety" };
 
 export default function SafetyPage() {
   return (
-    <PublicShell>
+    <PublicShell forceMarketing>
       <div className="mx-auto w-full max-w-3xl space-y-8 px-4 py-12 sm:px-6">
         <div className="space-y-3">
           <h1 className="text-3xl font-semibold tracking-tight">Safety</h1>

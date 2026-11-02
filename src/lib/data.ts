@@ -1,4 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
+import {
+  DEMO_REQUESTS,
+  DEMO_STUDENTS,
+  FALLBACK_CATEGORIES,
+  isDemoMode,
+} from "@/lib/demo";
 import type { Category, Profile, RequestRow, University } from "@/types/database";
 
 export function hasSupabaseEnv() {
@@ -128,18 +134,18 @@ export async function getUniversities(): Promise<University[]> {
 }
 
 export async function getCategories(): Promise<Category[]> {
-  if (!hasSupabaseEnv()) return [];
+  if (isDemoMode() || !hasSupabaseEnv()) return FALLBACK_CATEGORIES;
   const supabase = await createClient();
   const { data } = await supabase
     .from("categories")
     .select("*")
     .eq("is_active", true)
     .order("sort_order");
-  return (data as Category[]) ?? [];
+  return (data as Category[])?.length ? (data as Category[]) : FALLBACK_CATEGORIES;
 }
 
 export async function getRecentRequests(limit = 6) {
-  if (!hasSupabaseEnv()) return [];
+  if (isDemoMode() || !hasSupabaseEnv()) return DEMO_REQUESTS.slice(0, limit);
   const supabase = await createClient();
   const { data } = await supabase
     .from("requests")
@@ -150,11 +156,11 @@ export async function getRecentRequests(limit = 6) {
     .eq("status", "open")
     .order("created_at", { ascending: false })
     .limit(limit);
-  return data ?? [];
+  return data?.length ? data : DEMO_REQUESTS.slice(0, limit);
 }
 
 export async function getFeaturedStudents(limit = 6) {
-  if (!hasSupabaseEnv()) return [];
+  if (isDemoMode() || !hasSupabaseEnv()) return DEMO_STUDENTS.slice(0, limit);
   const supabase = await createClient();
   const { data } = await supabase
     .from("profiles")
@@ -166,7 +172,7 @@ export async function getFeaturedStudents(limit = 6) {
     .eq("is_suspended", false)
     .order("average_rating", { ascending: false, nullsFirst: false })
     .limit(limit);
-  return data ?? [];
+  return data?.length ? data : DEMO_STUDENTS.slice(0, limit);
 }
 
 export type RequestListItem = RequestRow & {

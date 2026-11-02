@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SiteHeader } from "@/components/layout/site-header";
+import { AppShell } from "@/components/layout/app-shell";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
@@ -72,21 +72,21 @@ export default async function MessagesPage({
   }
 
   return (
-    <>
-      <SiteHeader
-        user={{
-          id: profile.id,
-          displayName: profile.display_name,
-          isAdmin: profile.is_admin,
-          verified,
-        }}
-      />
-      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
-        <PlatformNotice title="Direct messaging notice">
-          Agree on service details and payment directly. StudentPro does not process service
-          payments.
+    <AppShell
+      user={{
+        id: profile.id,
+        displayName: profile.display_name,
+        firstName: profile.first_name,
+        isAdmin: profile.is_admin,
+        verified,
+        activeMode: profile.active_mode ?? "customer",
+      }}
+    >
+      <div className="flex flex-col gap-4">
+        <PlatformNotice compact title="Direct messaging notice">
+          Agree on details and payment directly. StudentPro does not process service payments.
         </PlatformNotice>
-        <div className="grid min-h-[70vh] overflow-hidden rounded-2xl border border-slate-200 bg-white lg:grid-cols-[280px_1fr]">
+        <div className="grid min-h-[70vh] overflow-hidden rounded-2xl border border-[#f0d5db] bg-white lg:grid-cols-[280px_1fr]">
           <aside className="border-b border-slate-200 lg:border-r lg:border-b-0">
             <div className="border-b border-slate-200 px-4 py-3 text-sm font-semibold">
               Conversations
@@ -168,6 +168,6 @@ export default async function MessagesPage({
           </section>
         </div>
       </div>
-    </>
+    </AppShell>
   );
 }
