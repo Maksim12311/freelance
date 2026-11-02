@@ -42,14 +42,21 @@
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.35);
+  --radius-2xl: calc(var(--radius) * 1.7);
+  --radius-3xl: calc(var(--radius) * 2.1);
+  --radius-4xl: calc(var(--radius) * 2.5);
 }
 
 :root {
-  --background: #ffffff;
+  /* StudentPro palette
+     Blue #2563EB — main actions
+     Sky wash #EFF6FF — soft surfaces
+     Ink #0F172A — text
+     Mist #64748B — secondary text
+     Mint #0F766E — trust/success accent
+  */
+  --background: #f7faff;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
@@ -57,30 +64,36 @@
   --popover-foreground: #0f172a;
   --primary: #2563eb;
   --primary-foreground: #ffffff;
-  --secondary: #f8fafc;
-  --secondary-foreground: #0f172a;
-  --muted: #f8fafc;
+  --secondary: #eaf2ff;
+  --secondary-foreground: #1e3a8a;
+  --muted: #eef4fb;
   --muted-foreground: #64748b;
-  --accent: #f8fafc;
-  --accent-foreground: #0f172a;
+  --accent: #e6f7f4;
+  --accent-foreground: #0f766e;
   --destructive: #dc2626;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --border: #dbe7f5;
+  --input: #dbe7f5;
   --ring: #2563eb;
   --chart-1: #2563eb;
-  --chart-2: #64748b;
+  --chart-2: #0f766e;
   --chart-3: #0f172a;
-  --chart-4: #94a3b8;
-  --chart-5: #cbd5e1;
-  --radius: 0.75rem;
-  --sidebar: #f8fafc;
+  --chart-4: #93c5fd;
+  --chart-5: #99f6e4;
+  --radius: 0.9rem;
+  --sidebar: #f7faff;
   --sidebar-foreground: #0f172a;
   --sidebar-primary: #2563eb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5f9;
-  --sidebar-accent-foreground: #0f172a;
-  --sidebar-border: #e2e8f0;
+  --sidebar-accent: #eaf2ff;
+  --sidebar-accent-foreground: #1e3a8a;
+  --sidebar-border: #dbe7f5;
   --sidebar-ring: #2563eb;
+  --brand: #2563eb;
+  --brand-soft: #eff6ff;
+  --mint: #0f766e;
+  --mint-soft: #e6f7f4;
+  --ink: #0f172a;
+  --mist: #64748b;
 }
 
 .dark {
@@ -96,8 +109,8 @@
   --secondary-foreground: #f8fafc;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --accent: #1e293b;
-  --accent-foreground: #f8fafc;
+  --accent: #134e4a;
+  --accent-foreground: #ccfbf1;
   --destructive: #f87171;
   --border: rgb(255 255 255 / 10%);
   --input: rgb(255 255 255 / 12%);
@@ -118,6 +131,11 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgb(37 99 235 / 0.08), transparent 34%),
+      radial-gradient(circle at top right, rgb(15 118 110 / 0.07), transparent 30%),
+      linear-gradient(180deg, #f7faff 0%, #ffffff 42%, #f3faf8 100%);
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;
@@ -127,6 +145,6 @@
   h3,
   .font-heading {
     font-family: var(--font-heading), var(--font-sans), sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
 }
