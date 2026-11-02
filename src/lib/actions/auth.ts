@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { hasSupabaseEnv } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimit } from "@/lib/rate-limit";
 import {
@@ -15,6 +16,9 @@ export type ActionResult = {
   error?: string;
   message?: string;
 };
+
+const SUPABASE_SETUP_ERROR =
+  "Supabase is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to .env.local, then restart the dev server.";
 
 function siteUrl() {
   return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
@@ -43,6 +47,14 @@ export async function signupAction(
 
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
+
+  if (!parsed.data.universityId) {
+    return { ok: false, error: "Select a university" };
+  }
+
+  if (!hasSupabaseEnv()) {
+    return { ok: false, error: SUPABASE_SETUP_ERROR };
   }
 
   const supabase = await createClient();
@@ -86,6 +98,10 @@ export async function loginAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
   }
 
+  if (!hasSupabaseEnv()) {
+    return { ok: false, error: SUPABASE_SETUP_ERROR };
+  }
+
   const supabase = await createClient();
   const { data: signInData, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
@@ -124,6 +140,9 @@ export async function loginAction(
 }
 
 export async function logoutAction() {
+  if (!hasSupabaseEnv()) {
+    redirect("/");
+  }
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
@@ -143,6 +162,10 @@ export async function forgotPasswordAction(
   const limited = rateLimit(`forgot:${parsed.data.email}`, 5, 60_000);
   if (!limited.ok) {
     return { ok: false, error: `Too many attempts. Try again in ${limited.retryAfterSec}s.` };
+  }
+
+  if (!hasSupabaseEnv()) {
+    return { ok: false, error: SUPABASE_SETUP_ERROR };
   }
 
   const supabase = await createClient();
@@ -170,6 +193,10 @@ export async function resetPasswordAction(
   });
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
+
+  if (!hasSupabaseEnv()) {
+    return { ok: false, error: SUPABASE_SETUP_ERROR };
   }
 
   const supabase = await createClient();

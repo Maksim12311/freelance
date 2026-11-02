@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   forgotPasswordAction,
   loginAction,
@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 
 function FormError({ state }: { state: ActionResult | null }) {
   if (!state?.error) return null;
@@ -39,6 +40,8 @@ export function SignupForm({
   nextPath?: string;
 }) {
   const [state, action, pending] = useActionState(signupAction, null);
+  const [universityId, setUniversityId] = useState("");
+  const selectedUniversity = universities.find((u) => u.id === universityId);
 
   return (
     <form action={action} className="space-y-4">
@@ -80,18 +83,30 @@ export function SignupForm({
           id="universityId"
           name="universityId"
           required
-          defaultValue=""
-          className="flex h-11 w-full rounded-xl border border-[#f0d5db] bg-white px-3 text-sm text-[#2a2124] outline-none focus-visible:border-[#e11d48] focus-visible:ring-3 focus-visible:ring-[#e11d48]/25 dark:bg-card"
+          value={universityId}
+          onChange={(event) => setUniversityId(event.target.value)}
+          className={cn(
+            "h-11 w-full appearance-none rounded-xl border bg-white px-3 text-sm text-[#2a2124] outline-none [color-scheme:light]",
+            "focus-visible:border-[#e11d48] focus-visible:ring-3 focus-visible:ring-[#e11d48]/25",
+            universityId
+              ? "border-[#e11d48] bg-[#fff5f6] font-medium text-[#e11d48]"
+              : "border-[#f0d5db]",
+          )}
         >
           <option value="" disabled>
             Select university
           </option>
           {universities.map((u) => (
-            <option key={u.id} value={u.id}>
+            <option key={u.id} value={u.id} className="bg-white text-[#2a2124]">
               {u.name}
             </option>
           ))}
         </select>
+        {selectedUniversity ? (
+          <p className="rounded-lg bg-[#ffe8ec] px-3 py-2 text-sm font-medium text-[#9f1239]">
+            Selected: {selectedUniversity.name}
+          </p>
+        ) : null}
       </div>
       <label className="flex items-start gap-2 text-sm text-slate-600">
         <input

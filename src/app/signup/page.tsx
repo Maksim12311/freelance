@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PublicShell } from "@/components/layout/public-shell";
 import { SignupForm } from "@/components/forms/auth-forms";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getUniversities } from "@/lib/data";
+import { getUniversities, hasSupabaseEnv } from "@/lib/data";
 
 export const metadata = { title: "Sign Up" };
 
@@ -17,11 +17,12 @@ export default async function SignupPage({
       ? params.next
       : "/dashboard";
   const universities = await getUniversities();
+  const configured = hasSupabaseEnv();
 
   return (
     <PublicShell>
       <div className="mx-auto flex w-full max-w-lg flex-col px-4 py-12 sm:px-6">
-        <Card className="border-slate-200 shadow-sm">
+        <Card className="border-[#f0d5db] shadow-sm">
           <CardHeader>
             <CardTitle className="text-2xl">Join StudentPro</CardTitle>
             <CardDescription>
@@ -30,6 +31,12 @@ export default async function SignupPage({
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {!configured ? (
+              <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                Auth is not connected yet. You can fill the form and choose a university, but
+                account creation needs Supabase keys in <code>.env.local</code>.
+              </p>
+            ) : null}
             <SignupForm
               universities={universities.map((u) => ({ id: u.id, name: u.name }))}
               nextPath={next}
