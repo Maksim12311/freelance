@@ -24,35 +24,35 @@ const footerLinks = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border bg-slate-50 dark:bg-slate-950">
-      <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr]">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2563EB] text-sm font-bold text-white">
+    <footer className="mt-auto border-t border-slate-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
+      <div className="mx-auto grid w-full max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr]">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2563EB] font-heading text-sm font-bold text-white">
               S
             </span>
-            <span className="text-lg font-semibold">StudentPro</span>
+            <span className="font-heading text-lg font-semibold tracking-tight">StudentPro</span>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-            Students Helping Students. A Vienna marketplace that connects university
-            students — StudentPro does not employ students or process service payments.
+          <p className="max-w-sm text-sm leading-relaxed text-slate-600">
+            Students Helping Students. A Vienna marketplace that connects university students —
+            without employing them or processing service payments.
           </p>
-          <p className="text-xs text-slate-500">
-            Draft legal pages require review by a qualified Austrian legal professional
-            before public launch.
+          <p className="text-xs leading-relaxed text-slate-500">
+            Draft legal pages require review by a qualified Austrian legal professional before
+            public launch.
           </p>
         </div>
         {footerLinks.map((group) => (
           <div key={group.title}>
-            <h3 className="mb-3 text-sm font-semibold text-slate-900 dark:text-slate-100">
+            <h3 className="mb-4 font-heading text-sm font-semibold text-slate-900">
               {group.title}
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {group.items.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-slate-600 transition hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                    className="text-sm text-slate-600 transition hover:text-[#2563EB]"
                   >
                     {item.label}
                   </Link>
@@ -62,8 +62,8 @@ export function SiteFooter() {
           </div>
         ))}
       </div>
-      <div className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-4 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <div className="border-t border-slate-200/80">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <span>© 2026 StudentPro (draft operator entity).</span>
           <span>Vienna, Austria · EUR (€)</span>
         </div>

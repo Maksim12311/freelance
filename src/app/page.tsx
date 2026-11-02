@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -9,10 +10,10 @@ import {
   Truck,
   Languages,
   HandHelping,
-  ShieldCheck,
   Search,
-  Users,
+  ShieldCheck,
   MessageCircle,
+  BadgeCheck,
 } from "lucide-react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { RequestCard } from "@/components/shared/request-card";
@@ -53,129 +54,151 @@ export default async function HomePage() {
   const popular = categories.length ? categories : fallbackCategories;
 
   return (
-    <PublicShell>
-      <section className="relative overflow-hidden border-b border-slate-200 bg-[radial-gradient(circle_at_top_right,#dbeafe,transparent_45%),linear-gradient(180deg,#ffffff,|#f8fafc)]">
-        <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-blue-100/60 blur-3xl" />
-        <div className="pointer-events-none absolute -right-16 bottom-0 h-64 w-64 rounded-full bg-sky-100/70 blur-3xl" />
-        <div className="relative mx-auto grid w-full max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:py-24">
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-700">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#2563EB]">
-              StudentPro · Vienna
+    <PublicShell tone="hero">
+      <section className="relative isolate min-h-[min(92vh,880px)] overflow-hidden">
+        <Image
+          src="/hero.jpg"
+          alt="Students collaborating outdoors near a European campus"
+          fill
+          priority
+          className="animate-drift object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(2,6,23,0.78)_0%,rgba(2,6,23,0.52)_48%,rgba(2,6,23,0.28)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(37,99,235,0.28),transparent_42%)]" />
+
+        <div className="relative mx-auto flex min-h-[min(92vh,880px)] w-full max-w-6xl flex-col justify-end px-4 pb-16 pt-28 sm:px-6 sm:pb-20 lg:justify-center lg:pb-24">
+          <div className="max-w-2xl space-y-7 text-white">
+            <p className="animate-rise font-heading text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+              StudentPro
             </p>
-            <h1 className="max-w-xl text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
+            <h1
+              className="animate-rise font-heading text-3xl font-medium leading-[1.08] text-balance text-white/95 sm:text-4xl lg:text-5xl"
+              style={{ animationDelay: "90ms" }}
+            >
               Your Skills. Your Community. Your Opportunities.
             </h1>
-            <p className="max-w-lg text-lg leading-relaxed text-slate-600">
-              Students Helping Students. Discover requests, offer your skills, and connect
-              directly — StudentPro does not process service payments.
+            <p
+              className="animate-rise max-w-xl text-base leading-relaxed text-white/78 sm:text-lg"
+              style={{ animationDelay: "160ms" }}
+            >
+              Students Helping Students across Vienna — connect directly, arrange details
+              independently.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <Button size="lg" className="bg-[#2563EB] hover:bg-blue-700" render={<Link href="/requests" />}>Find Requests
-                  <ArrowRight className="h-4 w-4" /></Button>
-              <Button size="lg" variant="outline" render={<Link href="/requests/new" />}>Post a Request</Button>
-            </div>
-            <form action="/requests" className="relative max-w-xl">
-              <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                name="q"
-                placeholder="What do you need help with?"
-                className="h-12 rounded-2xl border-slate-200 bg-white pl-11 shadow-sm"
-              />
-            </form>
-          </div>
-          <div className="relative hidden items-center justify-center lg:flex">
-            <div className="w-full rounded-[2rem] border border-white/80 bg-white/80 p-6 shadow-xl shadow-blue-100/50 backdrop-blur">
-              <div className="space-y-4">
-                <div className="rounded-2xl bg-slate-900 p-5 text-white">
-                  <p className="text-sm text-slate-300">Marketplace notice</p>
-                  <p className="mt-2 text-lg font-medium leading-snug">
-                    Connect with verified students. Agree on details independently.
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { label: "Student-only", icon: Users },
-                    { label: "Direct messaging", icon: MessageCircle },
-                    { label: "No service payments", icon: ShieldCheck },
-                    { label: "Vienna-focused", icon: Search },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
-                    >
-                      <item.icon className="mb-3 h-4 w-4 text-[#2563EB]" />
-                      <p className="text-sm font-medium text-slate-800">{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <div
+              className="animate-rise flex flex-wrap gap-3 pt-1"
+              style={{ animationDelay: "230ms" }}
+            >
+              <Button
+                size="lg"
+                className="h-11 rounded-2xl bg-white px-6 text-slate-950 hover:bg-blue-50"
+                render={<Link href="/requests" />}
+              >
+                Find Requests
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="h-11 rounded-2xl border-white/35 bg-white/10 px-6 text-white backdrop-blur hover:bg-white/18 hover:text-white"
+                render={<Link href="/requests/new" />}
+              >
+                Post a Request
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Popular categories</h2>
-            <p className="mt-2 text-sm text-slate-600">Browse common ways students help each other.</p>
-          </div>
+      <section className="relative border-b border-slate-200/80 bg-white/80 py-10 backdrop-blur">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
+          <form
+            action="/requests"
+            className="flex flex-col gap-3 rounded-[1.6rem] border border-slate-200 bg-slate-50/90 p-3 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.45)] sm:flex-row sm:items-center"
+          >
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                name="q"
+                placeholder="What do you need help with?"
+                className="h-12 rounded-2xl border-transparent bg-white pl-11 shadow-none"
+              />
+            </div>
+            <Button type="submit" className="h-12 rounded-2xl px-6">
+              Search requests
+            </Button>
+          </form>
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mb-8 max-w-2xl">
+          <h2 className="font-heading text-3xl font-semibold tracking-tight">Popular categories</h2>
+          <p className="mt-2 text-slate-600">
+            Browse the ways Vienna students help each other every week.
+          </p>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {popular.map((category) => {
+          {popular.map((category, index) => {
             const Icon = categoryIcons[category.slug] ?? HandHelping;
             return (
               <Link
                 key={category.slug}
                 href={`/requests?category=${category.slug}`}
-                className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
+                className="group rounded-[1.4rem] border border-slate-200/90 bg-white/90 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:bg-blue-50/40"
+                style={{ transitionDelay: `${index * 20}ms` }}
               >
-                <Icon className="mb-3 h-5 w-5 text-[#2563EB] transition group-hover:scale-110" />
-                <p className="text-sm font-medium text-slate-900">{category.name}</p>
+                <span className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#2563EB]/10 text-[#2563EB] transition group-hover:scale-110">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <p className="font-heading text-base font-medium text-slate-900">{category.name}</p>
               </Link>
             );
           })}
         </div>
       </section>
 
-      <section className="bg-slate-50 py-14">
+      <section className="surface-grid border-y border-slate-200/70 bg-[#f8fafc] py-16">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <h2 className="text-2xl font-semibold tracking-tight">How StudentPro Works</h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">
-            A simple path from student verification to independent collaboration.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-4">
+          <div className="mb-10 max-w-2xl">
+            <h2 className="font-heading text-3xl font-semibold tracking-tight">
+              How StudentPro Works
+            </h2>
+            <p className="mt-2 text-slate-600">
+              From verified student status to an independent collaboration — four clear steps.
+            </p>
+          </div>
+          <div className="grid gap-5 md:grid-cols-4">
             {[
               "Verify your student status.",
               "Discover requests or offer your skills.",
               "Connect directly with another student.",
               "Agree on the details independently.",
             ].map((step, index) => (
-              <div
-                key={step}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
-              >
-                <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#2563EB] text-sm font-semibold text-white">
-                  {index + 1}
+              <div key={step} className="relative pt-2">
+                <div className="mb-5 font-heading text-5xl font-semibold tracking-tight text-[#2563EB]/15">
+                  0{index + 1}
                 </div>
-                <p className="text-sm font-medium leading-relaxed text-slate-800">{step}</p>
+                <p className="text-base font-medium leading-relaxed text-slate-800">{step}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <div className="mb-8 flex items-end justify-between gap-4">
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Recent requests</h2>
-            <p className="mt-2 text-sm text-slate-600">
+            <h2 className="font-heading text-3xl font-semibold tracking-tight">Recent requests</h2>
+            <p className="mt-2 text-slate-600">
               {configured
                 ? "Open requests from verified students."
-                : "Connect Supabase to load live requests. Demo cards are not shown as real activity."}
+                : "Connect Supabase to load live requests. Empty state is intentional — not demo users."}
             </p>
           </div>
-          <Button variant="outline" render={<Link href="/requests" />}>View all</Button>
+          <Button variant="outline" className="rounded-2xl" render={<Link href="/requests" />}>
+            View all
+          </Button>
         </div>
         {recentRequests.length ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -193,23 +216,27 @@ export default async function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center text-sm text-slate-600">
-            No open requests yet. Be the first to{" "}
-            <Link href="/requests/new" className="font-medium text-[#2563EB]">
-              post a request
-            </Link>
-            .
+          <div className="rounded-[1.8rem] border border-dashed border-slate-300 bg-slate-50/80 px-6 py-16 text-center">
+            <p className="font-heading text-xl font-medium text-slate-900">No open requests yet</p>
+            <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">
+              Be the first to publish what you need help with.
+            </p>
+            <Button className="mt-6 rounded-2xl" render={<Link href="/requests/new" />}>
+              Post a Request
+            </Button>
           </div>
         )}
       </section>
 
-      <section className="bg-slate-50 py-14">
+      <section className="bg-[linear-gradient(180deg,#eff6ff_0%,#f8fafc_55%,#ffffff_100%)] py-16">
         <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold tracking-tight">Featured verified students</h2>
-            <p className="mt-2 text-sm text-slate-600">
-              Profiles appear only after student verification. Ratings are peer feedback, not
-              professional certification.
+          <div className="mb-8 max-w-2xl">
+            <h2 className="font-heading text-3xl font-semibold tracking-tight">
+              Featured verified students
+            </h2>
+            <p className="mt-2 text-slate-600">
+              Profiles appear only after verification. Ratings are peer feedback, not professional
+              certification.
             </p>
           </div>
           {featuredStudents.length ? (
@@ -227,33 +254,45 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-12 text-center text-sm text-slate-600">
-              Verified student profiles will appear here once accounts are connected to Supabase.
+            <div className="rounded-[1.8rem] border border-slate-200/80 bg-white/70 px-6 py-14 text-center text-sm text-slate-600 backdrop-blur">
+              Verified student profiles will appear here once Supabase is connected.
             </div>
           )}
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-6xl space-y-6 px-4 py-14 sm:px-6">
-        <h2 className="text-2xl font-semibold tracking-tight">Trust & safety</h2>
+      <section className="mx-auto w-full max-w-6xl space-y-8 px-4 py-16 sm:px-6">
+        <div className="max-w-2xl">
+          <h2 className="font-heading text-3xl font-semibold tracking-tight">Trust & safety</h2>
+          <p className="mt-2 text-slate-600">
+            Built as a connecting platform — with clear limits and moderation tools.
+          </p>
+        </div>
         <PlatformNotice />
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {[
             {
               title: "Student verification",
               body: "University email allowlists or enrollment documents reviewed before publishing and messaging.",
+              icon: BadgeCheck,
             },
             {
               title: "Report & moderate",
               body: "Report requests, profiles, messages, and reviews. Challenge moderation decisions through appeals.",
+              icon: ShieldCheck,
             },
             {
               title: "Independent arrangements",
               body: "Students agree on timing, conditions, and any payment directly. StudentPro never holds service funds.",
+              icon: MessageCircle,
             },
           ].map((item) => (
-            <div key={item.title} className="rounded-2xl border border-slate-200 p-5">
-              <h3 className="font-semibold text-slate-900">{item.title}</h3>
+            <div
+              key={item.title}
+              className="rounded-[1.5rem] border border-slate-200 bg-white p-6 transition hover:border-blue-200"
+            >
+              <item.icon className="mb-4 h-5 w-5 text-[#2563EB]" />
+              <h3 className="font-heading text-lg font-semibold text-slate-900">{item.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.body}</p>
             </div>
           ))}
