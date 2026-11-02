@@ -12,6 +12,7 @@ import { closeRequestAction, saveRequestAction, selectPreferredApplicantAction }
 import { startConversationAction } from "@/lib/actions/messages";
 import { updateApplicationStatusAction } from "@/lib/actions/applications";
 import { hasSupabaseEnv } from "@/lib/data";
+import { DEMO_REQUESTS, isDemoMode } from "@/lib/demo";
 import { getPricingSetting, formatEur } from "@/lib/pricing";
 import { countApplicationCredits } from "@/lib/payments";
 import { createClient } from "@/lib/supabase/server";
@@ -28,25 +29,50 @@ export default async function RequestDetailPage({
   const profile = await requireVerifiedStudent(`/requests/${id}`);
   const verified = isVerificationActive(profile) || profile.is_admin;
 
-  if (!hasSupabaseEnv()) {
-    return (
-      <PublicShell>
-        <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-slate-600">
-          Configure Supabase credentials to view request details.
-        </div>
-      </PublicShell>
-    );
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let request: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let applications: any[] = [];
+  let existingApplication: { id: string; status: string; messaging_unlocked?: boolean } | null =
+    null;
+
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    const demo = DEMO_REQUESTS.find((r) => r.id === id) ?? null;
+    if (!demo) notFound();
+    request = demo;
+  } else {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("requests")
+      .select(
+        "*, category:categories(name, slug), owner:profiles!requests_owner_id_fkey(id, display_name, verification_status, avatar_url, university:universities(name))",
+      )
+      .eq("id", id)
+      .maybeSingle();
+    request = data;
+
+    if (!request || request.is_hidden) notFound();
+
+    const isOwnerEarly = profile?.id === request.owner_id;
+    if (isOwnerEarly) {
+      const { data: apps } = await supabase
+        .from("applications")
+        .select(
+          "id, introduction, experience, proposed_price_eur, availability, status, created_at, applicant:profiles!applications_applicant_id_fkey(id, display_name, verification_status)",
+        )
+        .eq("request_id", id)
+        .order("created_at", { ascending: false });
+      applications = apps ?? [];
+    } else if (profile) {
+      const { data: existing } = await supabase
+        .from("applications")
+        .select("id, status, messaging_unlocked")
+        .eq("request_id", id)
+        .eq("applicant_id", profile.id)
+        .maybeSingle();
+      existingApplication = existing;
+    }
   }
-
-  const supabase = await createClient();
-
-  const { data: request } = await supabase
-    .from("requests")
-    .select(
-      "*, category:categories(name, slug), owner:profiles!requests_owner_id_fkey(id, display_name, verification_status, avatar_url, university:universities(name))",
-    )
-    .eq("id", id)
-    .maybeSingle();
 
   if (!request || request.is_hidden) notFound();
 
@@ -54,28 +80,9 @@ export default async function RequestDetailPage({
   const category = Array.isArray(request.category) ? request.category[0] : request.category;
   const isOwner = profile?.id === request.owner_id;
 
-  const { data: applications } = isOwner
-    ? await supabase
-        .from("applications")
-        .select(
-          "id, introduction, experience, proposed_price_eur, availability, status, created_at, applicant:profiles!applications_applicant_id_fkey(id, display_name, verification_status)",
-        )
-        .eq("request_id", id)
-        .order("created_at", { ascending: false })
-    : { data: [] };
-
-  const { data: existingApplication } =
-    profile && !isOwner
-      ? await supabase
-          .from("applications")
-          .select("id, status, messaging_unlocked")
-          .eq("request_id", id)
-          .eq("applicant_id", profile.id)
-          .maybeSingle()
-      : { data: null };
-
   const pricing = await getPricingSetting("application_fee");
-  const credits = profile && !isOwner ? await countApplicationCredits(profile.id) : 0;
+  const credits =
+    profile && !isOwner && !isDemoMode() ? await countApplicationCredits(profile.id) : 0;
 
   return (
     <PublicShell>

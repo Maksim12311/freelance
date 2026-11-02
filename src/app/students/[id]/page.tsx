@@ -10,6 +10,7 @@ import { isVerificationActive, requireVerifiedStudent } from "@/lib/auth";
 import { startConversationAction } from "@/lib/actions/messages";
 import { trackAnalyticsEvent } from "@/lib/analytics";
 import { hasSupabaseEnv } from "@/lib/data";
+import { DEMO_PROFILE, DEMO_STUDENTS, isDemoMode } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 import { getInitials } from "@/lib/utils";
 
@@ -23,51 +24,62 @@ export default async function StudentProfilePage({
   const { id } = await params;
   const current = await requireVerifiedStudent(`/students/${id}`);
 
-  if (!hasSupabaseEnv()) {
-    return (
-      <PublicShell>
-        <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-slate-600">
-          Configure Supabase credentials to view student profiles.
-        </div>
-      </PublicShell>
-    );
-  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let student: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let reviews: any[] = [];
 
-  const supabase = await createClient();
-  const { data: student } = await supabase
-    .from("profiles")
-    .select(
-      "*, university:universities(name, short_name), profile_skills(skill:skills(name))",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    const demo = DEMO_STUDENTS.find((s) => s.id === id);
+    if (!demo) notFound();
+    student = {
+      ...DEMO_PROFILE,
+      ...demo,
+      is_suspended: false,
+      university: demo.university,
+      profile_skills: demo.profile_skills,
+    };
+  } else {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select(
+        "*, university:universities(name, short_name), profile_skills(skill:skills(name))",
+      )
+      .eq("id", id)
+      .maybeSingle();
+    student = data;
+
+    if (!student || student.is_suspended) notFound();
+    if (
+      student.verification_status !== "verified" &&
+      current?.id !== student.id &&
+      !current?.is_admin
+    ) {
+      notFound();
+    }
+
+    if (current.id !== student.id && student.is_specialist_enabled) {
+      await trackAnalyticsEvent({
+        eventType: "profile_view",
+        actorId: current.id,
+        subjectProfileId: student.id,
+      });
+    }
+
+    const { data: reviewRows } = await supabase
+      .from("reviews")
+      .select(
+        "id, overall_rating, communication_rating, reliability_rating, comment, created_at, reviewer:profiles!reviews_reviewer_id_fkey(display_name)",
+      )
+      .eq("reviewee_id", id)
+      .eq("is_hidden", false)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    reviews = reviewRows ?? [];
+  }
 
   if (!student || student.is_suspended) notFound();
-  if (
-    student.verification_status !== "verified" &&
-    current?.id !== student.id &&
-    !current?.is_admin
-  ) {
-    notFound();
-  }
-
-  if (current.id !== student.id && student.is_specialist_enabled) {
-    await trackAnalyticsEvent({
-      eventType: "profile_view",
-      actorId: current.id,
-      subjectProfileId: student.id,
-    });
-  }
-
-  const { data: reviews } = await supabase
-    .from("reviews")
-    .select(
-      "id, overall_rating, communication_rating, reliability_rating, comment, created_at, reviewer:profiles!reviews_reviewer_id_fkey(display_name)",
-    )
-    .eq("reviewee_id", id)
-    .eq("is_hidden", false)
-    .order("created_at", { ascending: false })
-    .limit(20);
 
   const university = Array.isArray(student.university)
     ? student.university[0]

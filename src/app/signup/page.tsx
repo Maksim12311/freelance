@@ -2,7 +2,8 @@ import Link from "next/link";
 import { PublicShell } from "@/components/layout/public-shell";
 import { SignupForm } from "@/components/forms/auth-forms";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getUniversities, hasSupabaseEnv } from "@/lib/data";
+import { getUniversities } from "@/lib/data";
+import { isDemoMode } from "@/lib/demo";
 
 export const metadata = { title: "Sign Up" };
 
@@ -17,7 +18,7 @@ export default async function SignupPage({
       ? params.next
       : "/dashboard";
   const universities = await getUniversities();
-  const configured = hasSupabaseEnv();
+  const demo = isDemoMode();
 
   return (
     <PublicShell>
@@ -26,17 +27,12 @@ export default async function SignupPage({
           <CardHeader>
             <CardTitle className="text-2xl">Join StudentPro</CardTitle>
             <CardDescription>
-              Create your account, then verify your student status to access the private
-              marketplace.
+              {demo
+                ? "Local preview — sign up with any details to explore the marketplace without a database."
+                : "Create your account, then verify your student status to access the private marketplace."}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {!configured ? (
-              <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                Auth is not connected yet. You can fill the form and choose a university, but
-                account creation needs Supabase keys in <code>.env.local</code>.
-              </p>
-            ) : null}
             <SignupForm
               universities={universities.map((u) => ({ id: u.id, name: u.name }))}
               nextPath={next}

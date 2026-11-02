@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireVerifiedStudent } from "@/lib/auth";
 import { getUniversities, hasSupabaseEnv } from "@/lib/data";
+import { DEMO_STUDENTS, isDemoMode } from "@/lib/demo";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Find Students" };
@@ -19,7 +20,23 @@ export default async function StudentsPage({
   const universities = await getUniversities();
   let students: Array<Record<string, unknown>> = [];
 
-  if (hasSupabaseEnv()) {
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    let rows = [...DEMO_STUDENTS];
+    if (params.q) {
+      const q = params.q.toLowerCase();
+      rows = rows.filter(
+        (s) =>
+          s.display_name.toLowerCase().includes(q) ||
+          (s.bio || "").toLowerCase().includes(q),
+      );
+    }
+    if (params.location) {
+      rows = rows.filter((s) =>
+        (s.general_location || "").toLowerCase().includes(params.location!.toLowerCase()),
+      );
+    }
+    students = rows as Array<Record<string, unknown>>;
+  } else {
     const supabase = await createClient();
     let query = supabase
       .from("profiles")
@@ -112,11 +129,7 @@ export default async function StudentsPage({
         ) : (
           <EmptyState
             title="No verified students found"
-            description={
-              hasSupabaseEnv()
-                ? "Try another search or check back after more students verify."
-                : "Configure Supabase to load the student directory."
-            }
+            description="Try another search or check back after more students verify."
           />
         )}
       </div>

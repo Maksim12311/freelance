@@ -115,6 +115,15 @@ export async function submitApplicationAction(
     return { ok: false, error: "You already applied to this request." };
   }
 
+  const { isDemoMode } = await import("@/lib/demo");
+  if (isDemoMode()) {
+    return {
+      ok: true,
+      message:
+        "Demo mode: application recorded locally (no database). Messaging would unlock after payment in production.",
+    };
+  }
+
   // Optional invitation link (discovery only — still paid)
   const { data: invitation } = await supabase
     .from("specialist_invitations")

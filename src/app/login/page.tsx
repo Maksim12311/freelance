@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PublicShell } from "@/components/layout/public-shell";
 import { LoginForm } from "@/components/forms/auth-forms";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isDemoMode } from "@/lib/demo";
 
 export const metadata = { title: "Login" };
 
@@ -11,6 +12,7 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string; error?: string }>;
 }) {
   const params = await searchParams;
+  const demo = isDemoMode();
 
   return (
     <PublicShell>
@@ -18,7 +20,11 @@ export default async function LoginPage({
         <Card className="border-slate-200 shadow-sm">
           <CardHeader>
             <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>Sign in to your StudentPro account.</CardDescription>
+            <CardDescription>
+              {demo
+                ? "Local preview — use any email and password to continue without a database."
+                : "Sign in to your StudentPro account."}
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {params.error === "suspended" ? (

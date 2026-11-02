@@ -9,6 +9,8 @@ import { inviteSpecialistAction } from "@/lib/actions/invitations";
 import { requireVerifiedStudent } from "@/lib/auth";
 import { getSuggestedSpecialistsForRequest } from "@/lib/matching-data";
 import { hasSupabaseEnv } from "@/lib/data";
+import { DEMO_REQUESTS, DEMO_STUDENTS, isDemoMode } from "@/lib/demo";
+import type { MatchCandidateProfile, MatchReason, RankedMatch } from "@/lib/matching";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Suggested specialists" };
@@ -21,41 +23,71 @@ export default async function RequestSuggestionsPage({
   const { id } = await params;
   const profile = await requireVerifiedStudent(`/requests/${id}/suggestions`);
 
-  if (!hasSupabaseEnv()) {
-    return (
-      <PublicShell>
-        <div className="mx-auto max-w-3xl px-4 py-16 text-sm text-slate-600">
-          Configure Supabase to view specialist suggestions.
-        </div>
-      </PublicShell>
-    );
-  }
+  let request: { id: string; title: string; owner_id: string; status: string } | null = null;
+  let suggestions: RankedMatch<MatchCandidateProfile>[] = [];
 
-  const supabase = await createClient();
-  const { data: request } = await supabase
-    .from("requests")
-    .select("id, title, owner_id, status")
-    .eq("id", id)
-    .maybeSingle();
+  if (isDemoMode() || !hasSupabaseEnv()) {
+    const demo = DEMO_REQUESTS.find((r) => r.id === id);
+    if (!demo) notFound();
+    request = demo;
+    if (request.owner_id !== profile.id && request.owner_id !== profile.id) {
+      // In demo, allow viewing suggestions for any sample request.
+    }
+    suggestions = DEMO_STUDENTS.filter((s) => s.id !== profile.id).map((s, index) => ({
+      item: {
+        id: s.id,
+        display_name: s.display_name,
+        bio: s.bio,
+        specialist_headline: s.specialist_headline ?? null,
+        specialist_bio: s.bio,
+        general_location: s.general_location,
+        availability: null,
+        preferred_budget_min_eur: 20,
+        preferred_budget_max_eur: 100,
+        remote_available: true,
+        average_rating: s.average_rating,
+        completed_collaborations_count: s.completed_collaborations_count,
+        skillIds: [],
+        categoryIds: [demo.category_id],
+        hasActiveBoost: index === 0,
+        hasActivePlus: false,
+      },
+      score: 70 - index * 5,
+      reasons: [
+        { code: "category", label: "Matches request category", weight: 40 },
+        { code: "location", label: "Location compatible", weight: 15 },
+      ] as MatchReason[],
+      isSponsored: index === 0,
+      placement: index === 0 ? ("sponsored" as const) : ("organic" as const),
+    }));
+  } else {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("requests")
+      .select("id, title, owner_id, status")
+      .eq("id", id)
+      .maybeSingle();
+    request = data;
+    if (!request) notFound();
+    if (request.owner_id !== profile.id) {
+      return (
+        <PublicShell>
+          <div className="mx-auto max-w-3xl px-4 py-16">
+            <p className="text-sm text-slate-600">Only the request owner can browse suggestions.</p>
+            <Button className="mt-4" render={<Link href={`/requests/${id}`} />}>
+              Back to request
+            </Button>
+          </div>
+        </PublicShell>
+      );
+    }
+    suggestions = await getSuggestedSpecialistsForRequest(id, {
+      actorId: profile.id,
+      limit: 12,
+    });
+  }
 
   if (!request) notFound();
-  if (request.owner_id !== profile.id) {
-    return (
-      <PublicShell>
-        <div className="mx-auto max-w-3xl px-4 py-16">
-          <p className="text-sm text-slate-600">Only the request owner can browse suggestions.</p>
-          <Button className="mt-4" render={<Link href={`/requests/${id}`} />}>
-            Back to request
-          </Button>
-        </div>
-      </PublicShell>
-    );
-  }
-
-  const suggestions = await getSuggestedSpecialistsForRequest(id, {
-    actorId: profile.id,
-    limit: 12,
-  });
 
   const sponsored = suggestions.filter((s) => s.placement === "sponsored");
   const organic = suggestions.filter((s) => s.placement === "organic");
