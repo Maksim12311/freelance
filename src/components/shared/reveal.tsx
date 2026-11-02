@@ -19,6 +19,12 @@ export function Reveal({
     const node = ref.current;
     if (!node) return;
 
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
@@ -26,7 +32,7 @@ export function Reveal({
           observer.disconnect();
         }
       },
-      { threshold: 0.16, rootMargin: "0px 0px -8% 0px" },
+      { threshold: 0.06, rootMargin: "0px 0px -6% 0px" },
     );
 
     observer.observe(node);
@@ -37,7 +43,7 @@ export function Reveal({
     <div
       ref={ref}
       className={cn(
-        "transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]",
+        "will-change-[opacity,transform] transition-[opacity,transform] duration-[1300ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
         visible ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0",
         className,
       )}
@@ -45,5 +51,25 @@ export function Reveal({
     >
       {children}
     </div>
+  );
+}
+
+export function Section({
+  children,
+  className,
+  delay = 0,
+  id,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+  id?: string;
+}) {
+  return (
+    <Reveal delay={delay} className={cn("section-block", className)}>
+      <section id={id} className="section-flow">
+        {children}
+      </section>
+    </Reveal>
   );
 }
