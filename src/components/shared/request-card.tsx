@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { formatBudget, formatRelativeDate, truncate } from "@/lib/utils";
 
 export type RequestCardData = {
@@ -21,30 +22,39 @@ export function RequestCard({ request }: { request: RequestCardData }) {
   return (
     <Link
       href={`/requests/${request.id}`}
-      className="block h-full rounded-2xl bg-white p-5 shadow-[0_14px_30px_-24px_rgba(225,29,72,0.45)] ring-1 ring-[#f0e4d7] transition duration-300 hover:-translate-y-1 hover:shadow-[0_22px_40px_-24px_rgba(225,29,72,0.55)] hover:ring-rose-200"
+      className="group relative flex h-full flex-col overflow-hidden rounded-[1.35rem] bg-white p-6 ring-1 ring-[#edd9cb] transition duration-400 hover:-translate-y-1 hover:shadow-[0_28px_50px_-30px_rgba(225,29,72,0.45)] hover:ring-rose-200"
     >
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-[#e11d48] to-[#0284c7] transition duration-500 group-hover:scale-x-100" />
+
       <div className="flex flex-wrap items-center gap-2 text-xs">
         {request.category ? (
-          <span className="rounded-md bg-[#ffedd5] px-2 py-1 font-medium text-[#9a3412]">
+          <span className="rounded-lg bg-[#ffe4d6] px-2.5 py-1 font-semibold text-[#9a3412]">
             {request.category.name}
           </span>
         ) : null}
         <span className="capitalize text-stone-500">{request.status.replace("_", " ")}</span>
         {request.owner?.verification_status === "verified" ? (
-          <span className="font-medium text-[#0284c7]">Verified</span>
+          <span className="font-semibold text-[#0284c7]">Verified</span>
         ) : null}
       </div>
-      <h3 className="mt-3 font-heading text-lg font-semibold text-stone-900">{request.title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-stone-600">
+
+      <h3 className="mt-4 font-heading text-xl font-semibold tracking-tight text-stone-900 transition group-hover:text-[#e11d48]">
+        {request.title}
+      </h3>
+      <p className="mt-2 flex-1 text-sm leading-relaxed text-stone-600">
         {truncate(request.description, 120)}
       </p>
-      <p className="mt-4 text-xs text-stone-500">
-        {request.suggested_budget_eur != null
-          ? formatBudget(request.suggested_budget_eur)
-          : "Budget open"}
-        {request.location ? ` · ${request.location}` : ""}
-        {` · ${formatRelativeDate(request.created_at)}`}
-      </p>
+
+      <div className="mt-6 flex items-end justify-between gap-3 border-t border-[#edd9cb]/70 pt-4">
+        <p className="text-xs leading-relaxed text-stone-500">
+          {request.suggested_budget_eur != null
+            ? formatBudget(request.suggested_budget_eur)
+            : "Budget open"}
+          {request.location ? ` · ${request.location}` : ""}
+          {` · ${formatRelativeDate(request.created_at)}`}
+        </p>
+        <ArrowUpRight className="h-4 w-4 shrink-0 text-stone-300 transition group-hover:text-[#e11d48]" />
+      </div>
     </Link>
   );
 }
