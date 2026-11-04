@@ -11,6 +11,10 @@ import { isVerificationActive, requireVerifiedStudent } from "@/lib/auth";
 import { closeRequestAction, saveRequestAction, selectPreferredApplicantAction } from "@/lib/actions/requests";
 import { startConversationAction } from "@/lib/actions/messages";
 import { updateApplicationStatusAction } from "@/lib/actions/applications";
+import {
+  CreditBackHint,
+  CreditBackStatusBadge,
+} from "@/components/shared/credit-back-status";
 import { hasSupabaseEnv } from "@/lib/data";
 import { DEMO_REQUESTS, isDemoMode } from "@/lib/demo";
 import { getPricingSetting, formatEur } from "@/lib/pricing";
@@ -58,7 +62,7 @@ export default async function RequestDetailPage({
       const { data: apps } = await supabase
         .from("applications")
         .select(
-          "id, introduction, experience, proposed_price_eur, availability, status, created_at, applicant:profiles!applications_applicant_id_fkey(id, display_name, verification_status)",
+          "id, introduction, experience, proposed_price_eur, availability, status, created_at, credit_id, fee_eur, response_deadline_at, customer_responded_at, customer_response_kind, awaiting_customer_response, credit_refunded_at, applicant:profiles!applications_applicant_id_fkey(id, display_name, verification_status)",
         )
         .eq("request_id", id)
         .order("created_at", { ascending: false });
@@ -66,7 +70,9 @@ export default async function RequestDetailPage({
     } else if (profile) {
       const { data: existing } = await supabase
         .from("applications")
-        .select("id, status, messaging_unlocked")
+        .select(
+          "id, status, messaging_unlocked, credit_id, fee_eur, response_deadline_at, customer_responded_at, customer_response_kind, awaiting_customer_response, credit_refunded_at",
+        )
         .eq("request_id", id)
         .eq("applicant_id", profile.id)
         .maybeSingle();
@@ -121,6 +127,7 @@ export default async function RequestDetailPage({
                 <CardTitle>Applications</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
+                <CreditBackHint perspective="customer" />
                 {applications?.length ? (
                   applications.map((application) => {
                     const applicant = Array.isArray(application.applicant)
@@ -130,7 +137,21 @@ export default async function RequestDetailPage({
                       <div key={application.id} className="rounded-2xl border border-slate-200 p-4">
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <p className="font-medium">{applicant?.display_name}</p>
-                          <Badge variant="outline">{application.status}</Badge>
+                          <CreditBackStatusBadge
+                            application={{
+                              status: application.status,
+                              credit_id: application.credit_id ?? null,
+                              fee_eur: application.fee_eur ?? null,
+                              response_deadline_at: application.response_deadline_at ?? null,
+                              customer_responded_at: application.customer_responded_at ?? null,
+                              customer_response_kind: application.customer_response_kind ?? null,
+                              awaiting_customer_response: Boolean(
+                                application.awaiting_customer_response,
+                              ),
+                              credit_refunded_at: application.credit_refunded_at ?? null,
+                            }}
+                            perspective="customer"
+                          />
                         </div>
                         <p className="mt-2 text-sm text-slate-600">{application.introduction}</p>
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -144,6 +165,16 @@ export default async function RequestDetailPage({
                               Mark viewed
                             </Button>
                           </form>
+                          <form
+                            action={async () => {
+                              "use server";
+                              await updateApplicationStatusAction(application.id, "accepted");
+                            }}
+                          >
+                            <Button type="submit" size="sm" className="bg-[#e11d48] hover:bg-[#be123c]">
+                              Accept
+                            </Button>
+                          </form>
                           {applicant?.id ? (
                             <form
                               action={async () => {
@@ -151,7 +182,7 @@ export default async function RequestDetailPage({
                                 await selectPreferredApplicantAction(id, applicant.id);
                               }}
                             >
-                              <Button type="submit" size="sm">
+                              <Button type="submit" size="sm" variant="secondary">
                                 Select preferred
                               </Button>
                             </form>
@@ -274,10 +305,38 @@ export default async function RequestDetailPage({
               </CardHeader>
               <CardContent>
                 {existingApplication ? (
-                  <p className="text-sm text-slate-600">
-                    You already applied · status: {existingApplication.status}
-                    {existingApplication.messaging_unlocked ? " · messaging unlocked" : ""}
-                  </p>
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-600">
+                      You already applied
+                      {existingApplication.messaging_unlocked ? " · messaging unlocked" : ""}
+                    </p>
+                    <CreditBackStatusBadge
+                      application={{
+                        status: existingApplication.status,
+                        credit_id: (existingApplication as { credit_id?: string | null }).credit_id ?? null,
+                        fee_eur: (existingApplication as { fee_eur?: number | null }).fee_eur ?? null,
+                        response_deadline_at:
+                          (existingApplication as { response_deadline_at?: string | null })
+                            .response_deadline_at ?? null,
+                        customer_responded_at:
+                          (existingApplication as { customer_responded_at?: string | null })
+                            .customer_responded_at ?? null,
+                        customer_response_kind:
+                          (existingApplication as {
+                            customer_response_kind?: "message" | "accept" | "reject" | null;
+                          }).customer_response_kind ?? null,
+                        awaiting_customer_response: Boolean(
+                          (existingApplication as { awaiting_customer_response?: boolean })
+                            .awaiting_customer_response,
+                        ),
+                        credit_refunded_at:
+                          (existingApplication as { credit_refunded_at?: string | null })
+                            .credit_refunded_at ?? null,
+                      }}
+                      perspective="specialist"
+                    />
+                    <CreditBackHint perspective="specialist" />
+                  </div>
                 ) : (
                   <ApplicationForm
                     requestId={id}

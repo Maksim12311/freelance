@@ -125,17 +125,40 @@ export function ApplicationForm({
       <input type="hidden" name="requestId" value={requestId} />
       <Result state={state} />
       {feeEnabled ? (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-950">
+        <div className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-950">
           <p className="font-medium">Application fee: {feeFormatted}</p>
-          <p className="mt-1 text-xs text-amber-800">
-            Charged once per request. Messaging unlocks after a successful application
+          <p className="text-xs text-amber-900">
+            Charged once per request (1 credit or card). Messaging unlocks after payment
             {credits > 0
               ? ` · ${credits} credit${credits === 1 ? "" : "s"} available`
               : ""}
-            . Plus does not waive this fee.
+            . StudentPro Plus does not waive this fee.
           </p>
+          <p className="text-xs text-amber-900">
+            <strong>No reply → credit back:</strong> If the customer does not message, accept, or
+            decline within 72 hours, 1 application credit is returned automatically. Viewing does
+            not count. This credit return does not replace any statutory rights you may have for
+            monetary card payments.
+          </p>
+          <label className="flex items-start gap-2 text-xs text-amber-950">
+            <input
+              type="checkbox"
+              name="acceptFeePolicy"
+              required
+              className="mt-0.5 size-4 rounded border"
+            />
+            <span>
+              I understand the fee, the 72-hour response window, and that viewing alone does not
+              stop the countdown.
+            </span>
+          </label>
         </div>
-      ) : null}
+      ) : (
+        <p className="rounded-xl border border-[#f0d5db] bg-[#fff8f9] px-3 py-2 text-xs text-[#6f5f64]">
+          Paid applications are currently disabled pending legal approval. You can still apply for
+          free.
+        </p>
+      )}
       <div className="space-y-2">
         <Label htmlFor="introduction">Short introduction</Label>
         <Textarea id="introduction" name="introduction" required minLength={20} rows={4} />

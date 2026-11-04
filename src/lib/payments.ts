@@ -41,6 +41,23 @@ export async function consumeApplicationCredit(profileId: string): Promise<strin
     .eq("remaining", credit.remaining);
 
   if (error) return null;
+
+  // Immutable ledger entry for the consume (best-effort; unique per credit use).
+  try {
+    await supabase.from("application_credit_ledger").insert({
+      profile_id: profileId,
+      credit_id: credit.id,
+      entry_type: "consume",
+      amount: -1,
+      balance_after: credit.remaining - 1,
+      idempotency_key: `consume:${credit.id}:${credit.remaining}`,
+      note: "Application credit consumed",
+      metadata: {},
+    });
+  } catch {
+    // Ledger table may not exist yet in older environments.
+  }
+
   return credit.id;
 }
 
