@@ -43,16 +43,29 @@ export function PaidApplicationForm({
       <Result state={state} />
 
       {feeEnabled ? (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-950">
+        <div className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-950">
           <p className="font-medium">Application fee: {feeFormatted}</p>
-          <p className="mt-1 text-xs text-amber-800">
+          <p className="text-xs text-amber-900">
             Charged once per request. Messaging unlocks after payment
-            {credits > 0 ? ` · You have ${credits} application credit${credits === 1 ? "" : "s"}` : ""}.
-            StudentPro Plus does not waive this fee.
+            {credits > 0
+              ? ` · You have ${credits} application credit${credits === 1 ? "" : "s"}`
+              : ""}
+            . Plus does not waive this fee.
           </p>
+          <p className="text-xs text-amber-900">
+            <strong>No reply → credit back:</strong> No customer message / accept / decline within
+            72 hours → 1 credit returned (never twice). Viewing does not count. Statutory monetary
+            refund rights are separate.
+          </p>
+          <label className="flex items-start gap-2 text-xs">
+            <input type="checkbox" name="acceptFeePolicy" required className="mt-0.5 size-4 rounded border" />
+            <span>I understand the fee and 72-hour credit-back policy.</span>
+          </label>
         </div>
       ) : (
-        <p className="text-xs text-slate-500">Application fees are currently disabled by admin.</p>
+        <p className="text-xs text-slate-500">
+          Paid applications are disabled pending legal approval. Free apply is available.
+        </p>
       )}
 
       <div className="space-y-2">

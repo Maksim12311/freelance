@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 
-export type PricingKey = "application_fee" | "profile_boost_7d" | "plus_monthly";
+export type PricingKey =
+  | "application_fee"
+  | "profile_boost_7d"
+  | "plus_monthly"
+  | "application_response_window_hours";
 
 export type PricingSetting = {
   key: string;
@@ -16,9 +20,10 @@ const FALLBACK: Record<PricingKey, PricingSetting> = {
     key: "application_fee",
     amount_eur: 1.99,
     currency: "EUR",
-    description: "Standard specialist application fee",
-    is_enabled: true,
-    metadata: {},
+    description: "Standard specialist application fee (disabled until legal approval)",
+    // Paid applications stay off until legally approved.
+    is_enabled: false,
+    metadata: { disabled_until_legal_approval: true },
   },
   profile_boost_7d: {
     key: "profile_boost_7d",
@@ -35,6 +40,14 @@ const FALLBACK: Record<PricingKey, PricingSetting> = {
     description: "StudentPro Plus monthly subscription",
     is_enabled: true,
     metadata: { interval: "month" },
+  },
+  application_response_window_hours: {
+    key: "application_response_window_hours",
+    amount_eur: 0,
+    currency: "EUR",
+    description: "Hours before unanswered applications return a credit",
+    is_enabled: true,
+    metadata: { hours: 72, reminder_hours_before: 24 },
   },
 };
 

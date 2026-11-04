@@ -593,6 +593,13 @@ export interface Database {
           fee_eur: number | null;
           messaging_unlocked: boolean;
           unlocked_at: string | null;
+          response_deadline_at: string | null;
+          customer_responded_at: string | null;
+          customer_response_kind: "message" | "accept" | "reject" | null;
+          awaiting_customer_response: boolean;
+          credit_refunded_at: string | null;
+          credit_refund_ledger_id: string | null;
+          customer_deadline_reminder_sent_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -611,6 +618,13 @@ export interface Database {
           fee_eur?: number | null;
           messaging_unlocked?: boolean;
           unlocked_at?: string | null;
+          response_deadline_at?: string | null;
+          customer_responded_at?: string | null;
+          customer_response_kind?: "message" | "accept" | "reject" | null;
+          awaiting_customer_response?: boolean;
+          credit_refunded_at?: string | null;
+          credit_refund_ledger_id?: string | null;
+          customer_deadline_reminder_sent_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -629,6 +643,13 @@ export interface Database {
           fee_eur?: number | null;
           messaging_unlocked?: boolean;
           unlocked_at?: string | null;
+          response_deadline_at?: string | null;
+          customer_responded_at?: string | null;
+          customer_response_kind?: "message" | "accept" | "reject" | null;
+          awaiting_customer_response?: boolean;
+          credit_refunded_at?: string | null;
+          credit_refund_ledger_id?: string | null;
+          customer_deadline_reminder_sent_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -1486,6 +1507,66 @@ export interface Database {
         };
         Relationships: [];
       };
+      application_credit_ledger: {
+        Row: {
+          id: string;
+          profile_id: string;
+          application_id: string | null;
+          credit_id: string | null;
+          payment_id: string | null;
+          entry_type:
+            | "grant"
+            | "consume"
+            | "refund_no_reply"
+            | "admin_adjust"
+            | "purchase";
+          amount: number;
+          balance_after: number | null;
+          idempotency_key: string;
+          note: string | null;
+          metadata: Json;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          application_id?: string | null;
+          credit_id?: string | null;
+          payment_id?: string | null;
+          entry_type:
+            | "grant"
+            | "consume"
+            | "refund_no_reply"
+            | "admin_adjust"
+            | "purchase";
+          amount: number;
+          balance_after?: number | null;
+          idempotency_key: string;
+          note?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          application_id?: string | null;
+          credit_id?: string | null;
+          payment_id?: string | null;
+          entry_type?:
+            | "grant"
+            | "consume"
+            | "refund_no_reply"
+            | "admin_adjust"
+            | "purchase";
+          amount?: number;
+          balance_after?: number | null;
+          idempotency_key?: string;
+          note?: string | null;
+          metadata?: Json;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -1512,6 +1593,22 @@ export interface Database {
       expire_profile_boosts: {
         Args: Record<string, never>;
         Returns: number;
+      };
+      mark_application_customer_response: {
+        Args: {
+          p_application_id: string;
+          p_kind: string;
+          p_actor_id?: string;
+        };
+        Returns: boolean;
+      };
+      refund_application_credit_no_reply: {
+        Args: { p_application_id: string };
+        Returns: string;
+      };
+      process_no_reply_credit_back: {
+        Args: { p_now?: string };
+        Returns: Json;
       };
       // App-level RPCs (may be added in later migrations / admin helpers).
       request_account_deletion: {

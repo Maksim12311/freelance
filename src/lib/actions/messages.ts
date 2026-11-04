@@ -146,7 +146,41 @@ export async function sendMessageAction(formData: FormData): Promise<void> {
     );
   }
 
+  // Customer messaging on a request conversation counts as a response for credit-back.
+  const { data: conversation } = await supabase
+    .from("conversations")
+    .select("id, request_id")
+    .eq("id", parsed.data.conversationId)
+    .maybeSingle();
+
+  if (conversation?.request_id) {
+    const { data: request } = await supabase
+      .from("requests")
+      .select("owner_id")
+      .eq("id", conversation.request_id)
+      .maybeSingle();
+
+    if (request?.owner_id === profile.id) {
+      const { data: openApps } = await supabase
+        .from("applications")
+        .select("id")
+        .eq("request_id", conversation.request_id)
+        .eq("awaiting_customer_response", true)
+        .is("customer_responded_at", null);
+
+      if (openApps?.length) {
+        const { markCustomerApplicationResponse } = await import(
+          "@/lib/actions/applications"
+        );
+        for (const app of openApps) {
+          await markCustomerApplicationResponse(app.id, "message", profile.id);
+        }
+      }
+    }
+  }
+
   revalidatePath("/messages");
+  revalidatePath("/dashboard/applications");
 }
 
 export async function markConversationReadAction(conversationId: string) {
